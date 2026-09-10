@@ -1,0 +1,163 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIGP Study Kit — Free Practice Exams & Framework Recall (341 Questions)</title>
+<meta name="description" content="Free, unofficial AIGP study kit: 341 original practice exam questions across 5 mock exams, 54 framework recall cards, and a 3-week study plan — built from IAPP's AI Governance Professional Body of Knowledge v2.1.">
+<link rel="canonical" href="https://jasondmacleod.github.io/aigp-study-kit/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AIGP Study Kit — Free Practice Exams & Framework Recall">
+<meta property="og:description" content="341 original AIGP practice questions, 54 framework recall cards, and a 3-week study plan. Unofficial, self-built, cited against IAPP's BoK v2.1.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AIGP Study Kit — Free Practice Exams & Framework Recall">
+<meta name="twitter:description" content="341 original AIGP practice questions, 54 framework recall cards, and a 3-week study plan. Unofficial, self-built, cited against IAPP's BoK v2.1.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  "name": "AIGP Study Kit",
+  "description": "An unofficial, self-built study kit for the IAPP AIGP (Artificial Intelligence Governance Professional) certification exam: 341 original practice questions, 54 framework recall cards, and a 3-week study plan, cited against IAPP's Body of Knowledge v2.1.",
+  "educationalLevel": "Professional certification",
+  "learningResourceType": ["Practice test", "Flashcards", "Study guide"],
+  "about": { "@type": "Thing", "name": "AIGP — Artificial Intelligence Governance Professional certification" },
+  "isAccessibleForFree": true,
+  "author": { "@type": "Person", "name": "An AIGP exam candidate" },
+  "disclaimer": "Unofficial and unaffiliated with IAPP. Not endorsed by, sponsored by, or produced in partnership with IAPP or Wiley."
+}
+</script>
+<style>
+  :root{
+    --canvas:#EBEEE9; --surface:#FBFCFA; --surface-2:#F3F5F1;
+    --ink:#1A241F; --ink-soft:#586A61; --ink-faint:#8A9890;
+    --line:#D4DAD2; --line-strong:#C0C8BE;
+    --pine:#2C6E56; --pine-deep:#1E5040; --pine-wash:#E4EEE8;
+    --amber:#A9752A; --amber-wash:#F3EAD8;
+    --rust:#A5432C; --rust-wash:#F2E1DB;
+    --shadow:0 1px 0 rgba(26,36,31,.04), 0 6px 22px -12px rgba(26,36,31,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--canvas); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px; margin:0 auto; padding:28px 20px 100px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--pine); font-weight:600; margin:0 0 8px}
+  h1{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:clamp(28px,5.5vw,40px);
+    line-height:1.08; letter-spacing:-.02em; margin:0 0 14px}
+  h2{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:19px; letter-spacing:-.01em; margin:0 0 10px}
+  .lede{font-size:15.5px; color:var(--ink-soft); margin:0 0 20px; max-width:66ch}
+  p{margin:0 0 12px}
+  a{color:var(--pine-deep)}
+  .disclaimer{background:var(--amber-wash); border:1px solid var(--amber); border-radius:12px;
+    padding:14px 16px; font-size:13.5px; color:#5c4319; margin:0 0 26px}
+  .disclaimer b{color:#3d2d10}
+  .disclaimer a{color:#3d2d10; font-weight:600}
+  .spec{display:flex; flex-wrap:wrap; gap:6px 8px; margin:0 0 24px}
+  .chip{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); padding:4px 9px; border-radius:6px}
+  .chip b{color:var(--ink); font-weight:600}
+  .section{margin:32px 0}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin:14px 0 0}
+  .card{display:block; background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    padding:16px 17px; box-shadow:var(--shadow); text-decoration:none; color:var(--ink); transition:.14s}
+  .card:hover{border-color:var(--pine); background:var(--pine-wash)}
+  .card .tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--pine); font-weight:600; display:block; margin-bottom:6px}
+  .card h3{font-family:"Space Grotesk",sans-serif; font-size:16.5px; font-weight:700; margin:0 0 6px; letter-spacing:-.01em}
+  .card p{font-size:13px; color:var(--ink-soft); margin:0}
+  .card .count{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint); margin-top:8px; display:block}
+  ul{margin:0 0 12px; padding-left:20px}
+  li{margin-bottom:6px}
+  footer{margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace}
+  footer a{color:var(--ink-soft)}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Unofficial · AIGP Exam Prep</div>
+  <h1>AIGP Study Kit</h1>
+  <p class="lede">Free practice exams, recall cards, and a study plan for the IAPP <b>AIGP (Artificial Intelligence Governance Professional)</b> certification — built by one candidate while studying for the exam, and shared in case it helps someone else studying for it too.</p>
+
+  <div class="spec">
+    <span class="chip"><b>341</b> practice questions</span>
+    <span class="chip"><b>54</b> recall cards</span>
+    <span class="chip"><b>3-week</b> study plan</span>
+    <span class="chip">Cited to <b>BoK v2.1</b></span>
+    <span class="chip">Timed &amp; untimed modes</span>
+    <span class="chip">No sign-up, no tracking</span>
+  </div>
+
+  <div class="disclaimer">
+    <b>This is not an official IAPP product.</b> It is not affiliated with, endorsed by, or produced in partnership with IAPP or Wiley. AIGP®, IAPP®, CIPP®, CIPM® and CIPT® are trademarks of IAPP. See the full <a href="DISCLAIMER.md">disclaimer</a>.
+  </div>
+
+  <div class="section">
+    <h2>Study tools</h2>
+    <div class="grid">
+      <a class="card" href="tools/study-tool.html">
+        <span class="tag">Plan</span>
+        <h3>3-Week Study Plan</h3>
+        <p>A session-by-session plan mapped to the BoK v2.1 domains, with 20 diagnostic drill questions.</p>
+        <span class="count">20 drills · 3 weeks</span>
+      </a>
+      <a class="card" href="tools/framework-recall.html">
+        <span class="tag">Recall</span>
+        <h3>Framework Recall Cards</h3>
+        <p>The frameworks the exam expects you to know cold: NIST AI RMF, ISO/IEC 42001, the EU AI Act and more.</p>
+        <span class="count">54 cards</span>
+      </a>
+      <a class="card" href="tools/mock-exam-a.html">
+        <span class="tag">Mock Exam A</span>
+        <h3>Full-Length Practice Exam</h3>
+        <p>Scenario-based questions across all four BoK domains, timed to match the real exam's pacing.</p>
+        <span class="count">71 questions</span>
+      </a>
+      <a class="card" href="tools/mock-exam-b.html">
+        <span class="tag">Mock Exam B</span>
+        <h3>Full-Length Practice Exam</h3>
+        <p>A second independent question set — no overlap with Exam A — for spaced-repetition practice.</p>
+        <span class="count">68 questions</span>
+      </a>
+      <a class="card" href="tools/mock-exam-c.html">
+        <span class="tag">Mock Exam C</span>
+        <h3>BoK Gap-Targeted Exam</h3>
+        <p>Reweighted toward performance indicators the other exams under-drill, plus multi-select questions.</p>
+        <span class="count">66 questions</span>
+      </a>
+      <a class="card" href="tools/mock-exam-d.html">
+        <span class="tag">Mock Exam D</span>
+        <h3>Full-Length Practice Exam</h3>
+        <p>Another full pass at exam-style scenarios, with ordering and select-all-that-apply formats.</p>
+        <span class="count">68 questions</span>
+      </a>
+      <a class="card" href="tools/mock-exam-e.html">
+        <span class="tag">Mock Exam E</span>
+        <h3>Full-Length Practice Exam</h3>
+        <p>The final full-length set — sit it last, close to test day, as a clean readiness check.</p>
+        <span class="count">68 questions</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>How to use it</h2>
+    <p>Open any file above directly in a browser — nothing to install, no account needed. Each mock exam offers two modes:</p>
+    <ul>
+      <li><b>Timed</b> — a running clock, answers hidden until you submit, matching the real exam's pacing.</li>
+      <li><b>Untimed practice</b> — answers and explanations reveal as you go, better for early-stage learning.</li>
+    </ul>
+    <p>Progress is saved in your browser's local storage only — nothing is sent anywhere, and nothing carries over between devices or browsers.</p>
+  </div>
+
+  <div class="section">
+    <h2>How the questions are sourced</h2>
+    <p>All questions, scenarios, and explanations are original — written from scratch, not drawn from IAPP's practice exam. Every question cites the specific <b>BoK v2.1 performance indicator</b> it targets and the relevant <b>Sybex study-guide chapter</b>, so a wrong answer points you straight back to the source material rather than leaving you guessing.</p>
+  </div>
+
+  <footer>
+    Unofficial study material · not affiliated with or endorsed by IAPP or Wiley · trademarks belong to their respective owners · <a href="DISCLAIMER.md">full disclaimer</a> · <a href="README.md">README</a>
+  </footer>
+</div>

@@ -1,0 +1,323 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIGP Framework Recall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#EBEEE9; --surface:#FBFCFA; --surface-2:#F3F5F1;
+    --ink:#1A241F; --ink-soft:#586A61; --ink-faint:#8A9890;
+    --line:#D4DAD2; --line-strong:#C0C8BE;
+    --pine:#2C6E56; --pine-deep:#1E5040; --pine-wash:#E4EEE8;
+    --amber:#A9752A; --amber-wash:#F3EAD8;
+    --rust:#A5432C; --rust-wash:#F2E1DB;
+    --shadow:0 1px 0 rgba(26,36,31,.04), 0 6px 22px -12px rgba(26,36,31,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--canvas); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:800px; margin:0 auto; padding:22px 18px 100px}
+
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--pine); font-weight:600; margin:0 0 6px}
+  h1{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:clamp(28px,6.5vw,40px);
+    line-height:1.03; letter-spacing:-.02em; margin:0 0 12px}
+  .lede{font-size:14px; color:var(--ink-soft); margin:0 0 18px; max-width:62ch}
+
+  .controls{position:sticky; top:0; z-index:20; background:rgba(235,238,233,.94);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
+    margin:0 -18px 18px; padding:11px 18px; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .btn{appearance:none; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+    letter-spacing:.04em; border:1px solid var(--line-strong); background:var(--surface-2);
+    color:var(--ink-soft); border-radius:7px; padding:7px 12px; transition:.14s}
+  .btn:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .btn.on{background:var(--pine-deep); border-color:var(--pine-deep); color:#F7FAF8; font-weight:600}
+  .btn.warn.on{background:var(--amber); border-color:var(--amber); color:#FFF}
+  .count{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-faint); margin-left:auto}
+
+  section.grp{margin-bottom:26px}
+  .grp-head{display:flex; align-items:baseline; gap:10px; margin:0 0 4px}
+  .grp-tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; color:#F7FAF8;
+    background:var(--pine-deep); padding:3px 8px; border-radius:5px; letter-spacing:.06em}
+  h2{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:19px;
+    letter-spacing:-.01em; margin:0}
+  .grp-sub{font-size:12.5px; color:var(--ink-faint); margin:2px 0 12px}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:13px 15px; margin-bottom:9px; box-shadow:var(--shadow); transition:.14s}
+  .card.shaky{border-color:var(--amber); background:linear-gradient(0deg,var(--amber-wash),var(--surface) 65%)}
+  .card-top{display:flex; align-items:flex-start; gap:10px}
+  .prompt{font-weight:600; font-size:14.5px; flex:1; cursor:pointer; line-height:1.45}
+  .prompt:hover{color:var(--pine-deep)}
+  .mark{appearance:none; border:1px solid var(--line-strong); background:var(--surface-2);
+    border-radius:6px; width:26px; height:24px; cursor:pointer; font-size:12px; color:var(--ink-faint);
+    flex:0 0 auto; transition:.14s; line-height:1}
+  .mark:hover{border-color:var(--amber); color:var(--amber)}
+  .card.shaky .mark{background:var(--amber); border-color:var(--amber); color:#FFF}
+  .body{margin-top:10px; font-size:14px; line-height:1.6; color:var(--ink-soft)}
+  .body[hidden]{display:none}
+  .body b{color:var(--ink); font-weight:600}
+  .body ul{margin:6px 0 0; padding-left:18px}
+  .body li{margin-bottom:3px}
+  .body .k{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--pine-deep); font-weight:600}
+  .tapme{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-faint);
+    letter-spacing:.08em; text-transform:uppercase}
+
+  .flag{background:var(--rust-wash); border:1px solid var(--rust); border-radius:10px;
+    padding:11px 13px; margin:8px 0 0; font-size:13px; line-height:1.55; color:var(--ink)}
+  .flag b{color:var(--rust)}
+
+  footer{margin-top:28px; border-top:1px solid var(--line); padding-top:15px;
+    font-size:12px; color:var(--ink-faint); line-height:1.55}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media print{.controls{display:none} .body{display:block!important}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Domain-weighted · the recurring "big rocks"</p>
+  <h1>Framework Recall</h1>
+  <p class="lede">The frameworks that reappear across the whole exam. Default is recall mode — read the prompt, answer it in your head, then tap to check. Passive re-reading feels productive and isn't; retrieval is what makes it stick. Mark anything shaky and filter to just those on your last pass.</p>
+
+  <div class="controls">
+    <button class="btn on" id="modeBtn">Recall mode</button>
+    <button class="btn" id="revealBtn">Reveal all</button>
+    <button class="btn warn" id="filterBtn">Shaky only</button>
+    <button class="btn" id="resetBtn">Clear marks</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div id="host"></div>
+
+  <footer>
+    Built from the Wiley study guide, cross-checked against IAPP BoK v2.1 (effective 2 Feb 2026). Where current law has moved past what the exam tests, the card says so explicitly — give the BoK answer on test day.
+  </footer>
+</div>
+
+<script>
+const GROUPS=[
+{tag:"DOM II", title:"NIST AI Risk Management Framework", sub:"Voluntary, US, non-certifiable. Appears constantly.", cards:[
+ {p:"The AI RMF's structure — what the BoK actually asks for",
+  b:"The BoK asks for the framework <b>and Playbook</b>, including <b>core functions, categories and subcategories</b>. The structure: <b>4 functions → 19 categories → 72 subcategories</b>. AI RMF 1.0 was released January 2023.<br><br>The <b>Playbook</b> is a voluntary companion offering <b>suggested actions, references and related guidance</b> for achieving the RMF's outcomes at subcategory level. Both the RMF and the Playbook are <b>voluntary</b> — there is no certification against either, which is the contrast with ISO/IEC 42001."},
+
+ {p:"The four AI RMF functions, and what each one does",
+  b:"<span class='k'>GOVERN</span> — cross-cutting. Culture, accountability structures, policies, roles, risk tolerance. The other three operate inside it.<br><span class='k'>MAP</span> — context and framing. Purpose, stakeholders, intended use, risks identified before building.<br><span class='k'>MEASURE</span> — analyze and quantify. Metrics, benchmarks, TEVV, tracking against tolerance.<br><span class='k'>MANAGE</span> — act on risk. Prioritize, treat, respond to incidents, recover, communicate.<br><br><b>Exam tell:</b> if the scenario is about <i>deciding what to do</i> about a known risk (retrain, roll back, accept), it's Manage. If it's about <i>establishing who decides</i>, it's Govern."},
+ {p:"Risk treatment options — and the one people forget",
+  b:"<b>Mitigate, avoid, transfer, accept.</b> Risk <b>acceptance is legitimate</b> — provided the decision is made by the authorized role and documented. Exam distractors often imply accepting risk is always wrong. It isn't; accepting it <i>silently</i> is."},
+ {p:"What ARIA is, and how it relates to the AI RMF",
+  b:"NIST's <b>Assessing Risks and Impacts of AI</b> program — a research initiative providing methods, metrics and testbeds to operationalize the RMF. It <b>supplements, it does not replace or supersede</b> the RMF. That's the trap."}]},
+
+{tag:"DOM II", title:"EU AI Act", sub:"The single heaviest topic. Know tiers, roles, obligations, dates.", cards:[
+ {p:"The four risk tiers, with examples of each",
+  b:"<b>Prohibited (unacceptable):</b> government social scoring, subliminal/manipulative techniques, exploiting vulnerabilities, untargeted facial-image scraping, emotion recognition in workplace/education, real-time remote biometric ID in public for law enforcement (narrow exceptions).<br><b>High-risk:</b> Annex I (safety component of regulated products) + Annex III (employment, education, credit/essential services, law enforcement, migration, justice, biometrics, critical infrastructure).<br><b>Limited:</b> chatbots, deepfakes → <b>transparency obligations</b> only.<br><b>Minimal:</b> spam filters, AI in games → largely unregulated."},
+ {p:"The four actor roles, and what flips a deployer into a provider",
+  b:"<b>Provider</b> — develops and places on the market under its own name.<br><b>Deployer</b> — uses the system under its own authority.<br><b>Importer</b> — places a third-country system on the EU market.<br><b>Distributor</b> — makes it available in the supply chain without being provider or importer.<br><br>A deployer <b>becomes a provider</b> if it: puts its own name/brand on a high-risk system, makes a <b>substantial modification</b>, or <b>changes the intended purpose</b>. Very common exam scenario."},
+ {p:"The high-risk obligation checklist",
+  b:"Risk management system · data governance (quality, bias examination) · technical documentation · automatic logging/record-keeping · transparency and instructions for use · <b>human oversight</b> · accuracy, robustness, cybersecurity · quality management system · <b>conformity assessment</b> → <b>CE marking</b> → EU database registration · post-market monitoring · serious incident reporting."},
+ {p:"What a non-EU provider must do, and does the Act reach them at all",
+  b:"Yes — the Act is <b>extraterritorial</b>. A non-EU provider placing a system on the EU market must appoint an <b>authorized representative established in the Union</b>. 'The developer is outside the EU so nobody is covered' is always a wrong answer."},
+ {p:"GPAI obligations, and what triggers the systemic-risk tier",
+  b:"All GPAI: technical documentation, information for downstream providers, <b>copyright policy</b>, and a <b>sufficiently detailed summary of training content</b>.<br>GPAI with <b>systemic risk</b> (presumed at <b>10^25 FLOPs</b> training compute) adds: model evaluations, adversarial testing, systemic risk assessment and mitigation, serious incident reporting, cybersecurity protection."},
+ {p:"The implementation timeline — and the part that changed after the book",
+  b:"<b>Give these on the exam:</b> 1 Aug 2024 entry into force · 2 Feb 2025 prohibitions + AI literacy · 2 Aug 2025 GPAI rules, governance, penalties, notified bodies · <b>2 Aug 2026 high-risk requirements</b> · 2 Aug 2027 grace deadline for GPAI models already on the market before Aug 2025.",
+  flag:"<b>Current law differs.</b> Regulation (EU) 2026/1744 (Digital Omnibus on AI) entered into force 27 July 2026 and deferred high-risk obligations: <b>Annex III → 2 December 2027</b>, <b>Annex I → 2 August 2028</b>. Prohibitions, GPAI rules and the 2027 GPAI grace period are unchanged. Your exam is written from BoK v2.1, which predates this — answer 2 Aug 2026 on test day, but know the real dates for work."},
+ {p:"The penalty tiers",
+  b:"Up to <b>€35M or 7%</b> of global annual turnover — prohibited practices.<br>Up to <b>€15M or 3%</b> — most other obligations (including high-risk and GPAI).<br>Up to <b>€7.5M or 1%</b> — supplying incorrect or misleading information to authorities.<br>Whichever is higher, with proportionality for SMEs."}]},
+
+{tag:"DOM II", title:"South Korean AI Basic Act", sub:"Named in the BoK beside the EU AI Act. The Wiley book does not cover it.", cards:[
+ {p:"What it is, and why the BoK names it",
+  b:"Formally the <b>Act on the Development of Artificial Intelligence and the Establishment of a Foundation for Trust</b> — the AI Basic Act or AI Framework Act. Promulgated 21 January 2025, <b>took effect 22 January 2026</b> with its Enforcement Decree. It makes Korea the <b>second jurisdiction after the EU</b> with a comprehensive AI law, and the first in Asia-Pacific.<br><br>Its defining feature is pairing <b>industrial promotion</b> (funding, talent, clustering) with <b>binding obligations</b> — a 'minimum regulation' philosophy, deliberately less prescriptive than the EU model."},
+ {p:"Its core obligations and structure",
+  b:"<b>High-impact AI</b> — systems significantly affecting human life, safety or fundamental rights, in sectors including healthcare, energy, employment, finance, public services and education. Obligations: risk management, <b>impact assessments</b>, human oversight, documentation and explanation.<br><b>Generative AI</b> — transparency duties including <b>labelling AI-generated content</b> and notifying users they are dealing with AI.<br><b>Extraterritorial</b>, with a <b>domestic representative</b> required for foreign operators without a Korean establishment — the direct analogue of the EU's authorized representative.<br><b>Enforcement:</b> administrative fines up to <b>KRW 30 million</b> (roughly USD 21,000) — dramatically lower than the EU's, and subject to a grace period of at least a year from January 2026."},
+ {p:"Korea vs the EU AI Act — the contrasts worth holding",
+  b:"<b>Shared:</b> risk/impact tiering driving proportionate duties; extraterritorial reach; a domestic-representative requirement; impact assessments; transparency for synthetic content.<br><b>Different:</b> Korea has <b>no prohibited-practices tier</b> equivalent to the EU's; penalties are orders of magnitude smaller; the approach is framework legislation with detail delegated to enforcement decrees and MSIT guidance; and its high-performance compute threshold is <b>10^26 FLOPs</b> — about ten times the EU's 10^25 GPAI trigger."}]},
+
+{tag:"DOM II", title:"ISO/IEC standards", sub:"Know which does what — the distinction is the question.", cards:[
+ {p:"ISO/IEC 22989 vs 42001 — the distinction that gets tested",
+  b:"<b>22989</b> — concepts and <b>terminology</b>. A shared lexicon (bias, drift, transparency, autonomy). Prescribes nothing about how to build or manage AI. Its precision point: an AI system must involve elements of <b>perception, reasoning, or learning</b>, which distinguishes AI from simple automation and business rules — this matters for risk classification and regulatory scope.<br><b>42001</b> — the <b>AI management system</b> standard. <b>Certifiable</b>, structured like ISO 27001 (Annex SL), so it integrates with existing ISMS/QMS. Leadership, planning, support, operation, evaluation, improvement.<br><br><b>Tell:</b> 'independent certification' or 'auditable management system' → 42001. 'Inconsistent vocabulary across teams/contracts' → 22989."},
+ {p:"The three core ISO AI standards the BoK names — and the others",
+  b:"The Body of Knowledge names exactly three as core: <b>22989</b> (concepts and terminology), <b>42001</b> (certifiable AI management system), and <b>42005</b> (<b>AI system impact assessment</b>). If a question asks for guidance on conducting an impact assessment, the answer is <b>42005</b>.<br><br>Also worth recognizing: <b>23894</b> (AI risk management guidance), <b>5338</b> (AI lifecycle processes), <b>24028</b> (trustworthiness), <b>27001</b> (information security, which 42001 is built to sit alongside).",
+  flag:"<b>Correction from the official BoK.</b> Earlier versions of this deck led with 23894. The BoK v2.1 names <b>22989, 42001 and 42005</b> as the core trio — 42005 is the one to know cold."}]},
+
+{tag:"DOM II", title:"OECD AI Principles", sub:"The ethical substrate under nearly everything else.", cards:[
+ {p:"The five value-based principles, and why they matter for the exam",
+  b:"1. Inclusive growth, sustainable development and wellbeing<br>2. Human-centered values and fairness<br>3. Transparency and explainability<br>4. Robustness, security and safety<br>5. Accountability<br><br><b>Non-binding</b>, adopted by 40+ countries, and the acknowledged influence on the EU AI Act and G7 positions. If a question asks which framework provided the <i>ethical foundation</i> that shaped later regulation, this is it."}]},
+
+{tag:"DOM II", title:"GDPR applied to AI", sub:"Your strong area — but know the AI-specific hooks cold.", cards:[
+ {p:"Article 22 — what it covers and what rights attach",
+  b:"Applies to decisions based <b>solely on automated processing</b> (including profiling) producing <b>legal or similarly significant effects</b>. Rights: <b>human intervention</b>, to <b>express a point of view</b>, and to <b>contest</b> the decision, plus meaningful information about the logic involved. Exceptions: necessary for contract, authorized by law, or explicit consent — and safeguards still apply."},
+ {p:"When a DPIA is required, and how it differs from a conformity assessment",
+  b:"<b>DPIA</b> (Art 35) — required where processing is likely to result in <b>high risk to individuals' rights and freedoms</b>: large-scale profiling, special-category data, systematic monitoring. A <b>GDPR</b> instrument protecting data subjects.<br><b>Conformity assessment</b> — an <b>EU AI Act</b> instrument demonstrating a high-risk system meets Act requirements before CE marking. Different laws, different purposes. Don't swap them."},
+ {p:"Special-category data and inferences",
+  b:"Art 9 categories: racial/ethnic origin, political opinions, religious/philosophical beliefs, trade union membership, genetic, biometric (for unique ID), health, sex life/orientation. Processing is <b>prohibited unless an exception applies</b>.<br><b>Key AI point:</b> an <b>inferred</b> attribute is still personal data, and if it reveals a special category it attracts Art 9 protection — even if the person never supplied it."},
+ {p:"Cross-border transfer requirements",
+  b:"Need an <b>approved mechanism</b>: adequacy decision, <b>SCCs</b>, or <b>BCRs</b> — plus a <b>transfer impact assessment</b> of destination-country law, documented. Encryption and pseudonymization are <b>supplementary measures</b>, not substitutes. Notice alone never legitimizes a transfer."},
+ {p:"The Art 5 principles most often breached by AI projects",
+  b:"<b>Purpose limitation</b> — reusing data collected for one purpose to train a model for another is the single most common failure. Needs a compatibility assessment, fresh consent, or another lawful ground.<br><b>Data minimization</b> — 'more data is better' collides directly with this.<br><b>Accuracy</b>, <b>storage limitation</b>, <b>transparency</b>, and <b>accountability</b> round it out. Also know <b>Art 25</b> data protection by design and by default."}]},
+
+{tag:"DOM II", title:"US and sectoral law", sub:"Outside the usual privacy lane — a likely gap.", cards:[
+ {p:"The anti-discrimination statutes that bite on AI, and the doctrine that matters",
+  b:"<b>Title VII</b> (employment), <b>ECOA/Reg B</b> (credit, plus adverse action notices), <b>Fair Housing Act</b> (housing), <b>ADA</b> (disability), <b>FCRA</b> (consumer reports, accuracy, adverse action).<br><br><b>Disparate treatment</b> = intentional. <b>Disparate impact</b> = facially neutral practice, discriminatory effect, <b>no intent required</b>. Proxy variables (postal code for race) are the classic AI fact pattern — excluding the protected attribute does not cure it."},
+ {p:"How the FTC reaches AI",
+  b:"<b>FTC Act §5</b> — unfair or deceptive acts or practices. Applied to overstated AI capability claims, undisclosed automated decision-making, and biased outcomes. Remedy to know: <b>algorithmic disgorgement</b> — ordering deletion of models and algorithms built on improperly obtained data."},
+ {p:"Product liability theories applied to AI",
+  b:"<b>Design defect</b> — the design itself is unreasonably dangerous.<br><b>Manufacturing defect</b> — the product deviates from its intended design (e.g. a botched update or corrupted config); strict liability can attach even though the design was sound.<br><b>Failure to warn</b> — inadequate instructions or risk disclosure.<br>Modernized regimes increasingly bring software and updates within scope."},
+ {p:"Copyright and the four fair-use factors",
+  b:"1. Purpose and character (is it <b>transformative</b>? commercial?)<br>2. Nature of the work<br>3. Amount and substantiality used<br>4. <b>Effect on the market</b> for the original<br><br>Factors 1 and 4 carry the most weight in AI disputes. <b>Public availability confers no licence.</b> Outputs substantially similar to protected expression undercut the defense. Also: US patent law requires a <b>human inventor</b>."},
+ {p:"State and city AI laws worth recognizing by name",
+  b:"<b>NYC Local Law 144</b> — the one the study guide teaches directly: <b>annual independent bias audits</b> of automated employment decision tools, <b>publication of audit results</b>, and <b>notice to candidates</b>. First of its kind in the US.<br><b>Illinois BIPA</b> (biometric consent) and the AI Video Interview Act.<br><b>California CCPA/CPRA</b>, including automated decision-making technology rules.<br><b>Colorado SB21-169</b> — insurance; requires insurers to show models do not produce unfairly discriminatory outcomes.<br>Several states (California, Texas, New York) target malicious <b>deepfakes</b> in political and pornographic content.",
+  flag:"<b>Don't rely on the Colorado AI Act (SB 24-205).</b> It was repealed before ever taking effect — Governor Polis signed SB 26-189, the Automated Decision-Making Technology Act, on 14 May 2026, replacing the duty of care, impact assessments and high-risk classification with a narrower disclosure regime effective 1 January 2027. The study guide never covered SB 24-205 anyway, so it is unlikely to be tested; know NYC Local Law 144 instead."}]},
+
+{tag:"DOM I", title:"Governance mechanics", sub:"The structural answers to 'what should they do next'.", cards:[
+ {p:"RACI — the rule that generates exam questions",
+  b:"<b>R</b>esponsible (does the work — can be many) · <b>A</b>ccountable (<b>exactly one</b>, answerable for the outcome) · <b>C</b>onsulted (two-way input) · <b>I</b>nformed (one-way updates).<br>Diffusing accountability across several people is always the flaw."},
+ {p:"Documentation artifacts and what each is for",
+  b:"<b>Model card</b> — intended use, training data, metrics, <b>limitations</b>, ethical considerations. Structured transparency for downstream deployers.<br><b>System card</b> — the same at whole-system level.<br><b>Datasheet for datasets</b> — provenance, collection method, composition, recommended uses.<br><b>AI impact assessment</b> — harms to people and society.<br><b>DPIA</b> — privacy risk. <b>Conformity assessment</b> — regulatory compliance. <b>Algorithmic audit</b> — independent evaluation."},
+ {p:"Governance maturity progression",
+  b:"Ad hoc → repeatable → <b>defined</b> → managed → optimized. The move that matters most: from ad hoc to defined, via <b>mandatory lifecycle checkpoints with required artifacts and approval gates</b>. Templates and tooling help you execute a standard; they don't create one.<br><br><b>Proportionality:</b> governance must fit organizational size, sector, risk profile and culture. A structure too heavy to sustain produces skipped controls — worse than a lighter one that actually runs."},
+ {p:"Third-party and vendor risk — the terms that carry governance weight",
+  b:"<b>Audit rights</b> · documentation and technical information · <b>incident notification</b> duties · restrictions on the vendor <b>training on your data</b> · data provenance and licensing warranties · indemnities · IP ownership of outputs · exit and portability.<br><br>When a vendor won't disclose something, the governed move is to convert the gap into <b>contractual terms plus a documented, authorized risk acceptance</b> — not to walk away and not to ignore it. <b>Outsourcing the model never outsources accountability.</b> (Weighted more heavily in BoK v2.1.)"}]},
+
+{tag:"DOM III", title:"Development & data", sub:"29% of the exam. Governance overlay on the ML lifecycle.", cards:[
+ {p:"Verification vs validation",
+  b:"<b>Verification</b> — was the system built <b>right</b>, against specification?<br><b>Validation</b> — was the <b>right system</b> built for the real-world need and context?<br>Both sit inside <b>TEVV</b> (test, evaluation, verification, validation), before release."},
+ {p:"Sources of bias, by origin",
+  b:"<b>Historical</b> — the world (and the labels) were already biased; the model faithfully learns it. The recruitment-model-trained-on-past-hiring scenario.<br><b>Representation</b> — subgroups under-sampled.<br><b>Measurement</b> — the proxy chosen doesn't measure what you think.<br><b>Aggregation</b> — one model forced across distinct subgroups.<br><b>Evaluation</b> — benchmark unrepresentative.<br><b>Automation/confirmation bias</b> — humans over-trusting or cherry-picking model output."},
+ {p:"Data lineage and provenance — what an auditor is actually asking for",
+  b:"<b>Provenance</b> = where data came from and under what terms. <b>Lineage</b> = every transformation from origin to a specific model version. Together they underpin reproducibility, licensing defense, and audit.<br>Not the same as minimization (how much you collect), access logs (who touched it), or retention (how long you keep it)."},
+ {p:"Testing types beyond accuracy",
+  b:"<b>Subgroup/fairness testing</b> — aggregate accuracy routinely hides subgroup failure.<br><b>Adversarial robustness</b> and <b>red teaming</b>.<br><b>Explainability testing</b> — SHAP, LIME, counterfactuals.<br>Fairness metrics: demographic parity, equalized odds, disparate impact ratio — and they can conflict, so choosing one is a documented governance decision, not a technical default."},
+ {p:"Threshold setting — why it's a governance decision",
+  b:"Where you set a decision threshold determines <b>who bears which type of error</b> (false positives vs false negatives). That's a value tradeoff about relative harm, not a tuning parameter — so it needs documented rationale, an owner, and review."},
+ {p:"AI-specific security threats",
+  b:"<b>Data poisoning</b> (corrupting training data) · <b>model inversion</b> (reconstructing training data) · <b>membership inference</b> (was this record in training?) · <b>evasion/adversarial examples</b> · <b>prompt injection</b> · <b>model theft/extraction</b>.<br>These are the additions AI makes to a conventional security policy that already covers access control, encryption and patching."}]},
+
+{tag:"DOM IV", title:"Deployment, monitoring & retirement", sub:"28% of the exam. Scenario-heavy.", cards:[
+ {p:"Deployment environments and when each wins",
+  b:"<b>Cloud</b> — scale and elasticity; less infrastructure control.<br><b>On-premises</b> — maximum control and data residency; capital cost.<br><b>Edge</b> — low latency, works offline, data never leaves the device. The answer whenever latency + outage tolerance + on-site sensitive data appear together.<br><b>Hybrid</b> — split; check <i>where inference actually happens</i> before choosing it."},
+ {p:"Adaptation approaches — as-is, fine-tune, RAG, from scratch",
+  b:"<b>As-is / prompting</b> — fastest, no training, limited by context window.<br><b>Fine-tuning</b> — adapts weights to domain; costly, and knowledge is frozen at training time.<br><b>RAG</b> — retrieves from an external knowledge base <b>at inference</b>. Updates take effect immediately and outputs can <b>cite sources</b>. The answer for frequently-changing corpora.<br><b>From scratch</b> — rarely proportionate."},
+ {p:"Drift types",
+  b:"<b>Data drift</b> — the <b>input distribution</b> shifts.<br><b>Concept drift</b> — the <b>relationship between inputs and outputs</b> shifts; the world changed, so the same inputs now imply different outcomes.<br><b>Model decay</b> — the general performance degradation over time.<br>Tell: 'input quality unchanged but behavior/patterns changed' → concept drift."},
+ {p:"Human oversight — the three configurations, and what makes it meaningful",
+  b:"<b>In the loop</b> — human approves each decision.<br><b>On the loop</b> — human monitors and can intervene.<br><b>Out of the loop</b> — fully autonomous.<br><br>Oversight is meaningful only when the human has <b>genuine authority and practical capacity to intervene</b> — time, information, training, and the power to override or halt. Bigger review samples and better dashboards improve visibility without conferring control."},
+ {p:"Release patterns",
+  b:"<b>Shadow</b> — runs on real traffic, outputs not served; compares a candidate against the incumbent with zero user risk.<br><b>Canary</b> — small share of live traffic.<br><b>Blue-green</b> — instant switch with rollback.<br><b>A/B</b> — controlled comparison."},
+ {p:"Post-market monitoring vs a dashboard",
+  b:"A <b>documented, forward-looking plan established before release</b>: what real-world data is collected, how it's reviewed, by whom, what thresholds trigger action, and how <b>serious incidents</b> get reported. Dashboards are one input. Metrics without thresholds and a defined escalation path produce reports nobody acts on."},
+ {p:"Incident response order for an AI system",
+  b:"<b>Contain → assess → investigate → remediate → notify → learn.</b><br>If personal data leaked, <b>breach assessment and statutory notification clocks run independently of the technical fix</b>. Never retrain first (destroys evidence), never disable logging (destroys the audit trail)."},
+ {p:"Retirement done properly",
+  b:"<b>Controlled deactivation</b> · <b>preserve model versions, decision logs and documentation</b> per retention obligations · notify affected external stakeholders · document lessons learned · transition or migrate dependent processes.<br>Affected individuals may contest past decisions and regulators may examine them long after shutdown, so prompt deletion destroys exactly what you need."},
+ {p:"Secondary use — the trap",
+  b:"Approval attaches to a <b>use case in context</b>, not to a model in the abstract. Repurposing an approved model for a different decision, population, or consequence requires a <b>fresh impact assessment, risk review and approval</b>. Updating the model card documents the change; it doesn't authorize it."}]},
+
+{tag:"EXAM", title:"Blueprint calibration", sub:"Straight from the official BoK v2.1 — this changes where you spend time.", cards:[
+ {p:"How many questions come from each domain",
+  b:"The BoK publishes exact ranges. <b>Domain I: 16–20 · Domain II: 19–23 · Domain III: 21–25 · Domain IV: 21–25.</b> Midpoints total <b>85</b> of 100 items, which is where the 15 unscored pilot questions come from.<br><br>Shares of scored items: <b>I ≈ 21%, II ≈ 25%, III ≈ 27%, IV ≈ 27%</b>. Note Domain II is <i>larger</i> than the Wiley guide implies."},
+ {p:"Which single competency is worth the most marks",
+  b:"<b>IV.C — governing deployment and use: 9–11 items</b>, the largest block on the exam. Then <b>III.C</b> (release, monitoring, maintenance) at 8–10.<br><br>The smallest is <b>II.D at 3–5 items</b> — that is OECD, NIST RMF <i>and</i> ISO combined. Know them precisely, but do not spend a third of your time there; the marks live in Domains III and IV."},
+ {p:"What cognitive level the questions sit at",
+  b:"IAPP states questions focus on the <b>remember/understand</b> and <b>apply/analyze</b> levels of Bloom's Taxonomy — not evaluate or create. The verb opening each performance indicator signals the level.<br><br>Domain II indicators nearly all begin with <b>'Understand'</b>, so that domain is more definitional than scenario-based. Domains III and IV use <i>govern, perform, apply, identify, document, conduct, forecast</i> — applied questions."},
+ {p:"The question format the practice exams often miss",
+  b:"The official study guide includes a <b>MULTI-SELECT</b> example: 'select 3 of the 5 options — <b>no partial credit</b>.' Expect some. Read the required count, select exactly that many, and remember a near-miss scores the same as a blank.<br><br>IAPP also recommends a minimum of <b>30 hours</b> of preparation, and sells its own 100-question practice exam."},
+ {p:"BoK terminology to mirror on exam day",
+  b:"Use the BoK's own words where they differ from common usage:<br>• It says <b>'model or data drift'</b> — not 'concept drift'.<br>• It names <b>'i.e., 22989, 42001 and 42005'</b> — a closed list, not examples.<br>• It says <b>'AI system'</b> throughout, deliberately unified from 'AI model' in v2.1 — think system-level: infrastructure, human oversight, third parties, downstream impact.<br>• It treats <b>developer/provider/deployer/user</b> as labels for <i>tasks</i>, noting many organizations fill several roles at once."}]},
+
+{tag:"EXAM", title:"Test-day tactics", sub:"Cheap marks and avoidable failures.", cards:[
+ {p:"How to work the question set",
+  b:"~1.65 min per question (100 in ~165 min). <b>Answer everything</b> — no penalty for wrong answers, so never leave a blank. <b>Flag and return</b> is allowed; use it rather than stalling. Watch for <b>'BEST'</b>, <b>'MOST'</b>, <b>'FIRST'</b> — several options will be defensible and only one is best. Take the optional 15-minute break if offered; fatigue costs more than the time does."},
+ {p:"How to break a two-option tie",
+  b:"Prefer the answer that: is <b>proportionate</b> (neither ignores the risk nor bans the activity outright); <b>documents and assigns ownership</b>; acts <b>earliest in the lifecycle</b>; keeps a <b>human with real authority</b>; and treats accountability as <b>non-delegable</b>. Absolutes ('always', 'never', 'no need to') are usually wrong. Options that delete evidence, defer a live risk, or outsource responsibility are almost always wrong."},
+ {p:"Logistics that can cost you the fee",
+  b:"Government-issued <b>photo ID with a name matching your booking exactly</b>. For OnVUE remote: <b>check in 30 minutes early</b>, run the system test in advance, clear the room, and stay in webcam view. A <b>digital whiteboard</b> is provided — physical paper or pens are not permitted. In-person reschedules need <b>48 hours</b> notice; remote can be rescheduled up to 15 minutes after the start time. The exam must be sat within <b>one year of purchase</b> or the fee is forfeited.",
+  flag:"<b>Verify the retake rule yourself.</b> Third-party sources conflict — some say a 7-day wait, others 14. IAPP's own FAQ doesn't state a number plainly. Confirm at iapp.org/certify/faqs before you book, and note a retake costs a new exam fee."}]}
+];
+
+const KEY="aigp_recall_shaky_v1";
+let shaky={};
+let mode="recall";      // 'recall' | 'reference'
+let filterShaky=false;
+const hasStore = typeof window!=="undefined" && window.storage && typeof window.storage.get==="function";
+const $=id=>document.getElementById(id);
+
+async function load(){ if(!hasStore) return;
+  try{ const r=await window.storage.get(KEY); if(r&&r.value) shaky=JSON.parse(r.value)||{}; }catch(e){} }
+async function save(){ if(!hasStore) return;
+  try{ await window.storage.set(KEY,JSON.stringify(shaky)); }catch(e){ console.error(e); } }
+
+function idOf(g,c){ return "g"+g+"c"+c; }
+
+function render(){
+  const host=$("host"); host.innerHTML="";
+  let shown=0, total=0;
+  GROUPS.forEach((grp,gi)=>{
+    const cards=grp.cards.filter((_,ci)=>!filterShaky || shaky[idOf(gi,ci)]);
+    total+=grp.cards.length;
+    if(!cards.length) return;
+    const sec=document.createElement("section"); sec.className="grp";
+    const head=document.createElement("div"); head.className="grp-head";
+    head.innerHTML='<span class="grp-tag">'+grp.tag+'</span><h2>'+grp.title+'</h2>';
+    sec.appendChild(head);
+    const sub=document.createElement("p"); sub.className="grp-sub"; sub.textContent=grp.sub; sec.appendChild(sub);
+    grp.cards.forEach((c,ci)=>{
+      const id=idOf(gi,ci);
+      if(filterShaky && !shaky[id]) return;
+      shown++;
+      const card=document.createElement("div");
+      card.className="card"+(shaky[id]?" shaky":"");
+      const top=document.createElement("div"); top.className="card-top";
+      const p=document.createElement("div"); p.className="prompt"; p.textContent=c.p;
+      const m=document.createElement("button"); m.className="mark"; m.title="Mark as shaky"; m.textContent="⚑";
+      top.appendChild(p); top.appendChild(m);
+      card.appendChild(top);
+      const body=document.createElement("div"); body.className="body";
+      body.innerHTML=c.b+(c.flag?'<div class="flag">'+c.flag+'</div>':'');
+      body.hidden = (mode==="recall");
+      card.appendChild(body);
+      if(mode==="recall"){
+        const hint=document.createElement("div"); hint.className="body";
+        hint.innerHTML='<span class="tapme">tap the prompt to check yourself</span>';
+        hint.id="hint-"+id;
+        card.appendChild(hint);
+      }
+      p.addEventListener("click",()=>{
+        body.hidden=!body.hidden;
+        const h=document.getElementById("hint-"+id); if(h) h.hidden=!body.hidden;
+      });
+      m.addEventListener("click",()=>{ shaky[id]=!shaky[id]; save(); render(); });
+      sec.appendChild(card);
+    });
+    host.appendChild(sec);
+  });
+  const marked=Object.values(shaky).filter(Boolean).length;
+  $("count").textContent = (filterShaky? shown+" shaky" : shown+" of "+total+" cards") + (marked&&!filterShaky? " · "+marked+" marked":"");
+  if(filterShaky && !shown){
+    host.innerHTML='<div class="card"><div class="prompt" style="cursor:default">Nothing marked shaky.</div><div class="body">Work through the cards and flag anything you couldn\'t recall cleanly — then come back here for your final pass.</div></div>';
+  }
+}
+
+$("modeBtn").addEventListener("click",()=>{
+  mode = mode==="recall" ? "reference" : "recall";
+  $("modeBtn").textContent = mode==="recall" ? "Recall mode" : "Reference mode";
+  $("modeBtn").classList.toggle("on", mode==="recall");
+  render();
+});
+$("revealBtn").addEventListener("click",()=>{
+  document.querySelectorAll(".body").forEach(b=>{ if(!b.id||!b.id.startsWith("hint-")) b.hidden=false; });
+  document.querySelectorAll('[id^="hint-"]').forEach(h=>h.hidden=true);
+});
+$("filterBtn").addEventListener("click",()=>{
+  filterShaky=!filterShaky;
+  $("filterBtn").classList.toggle("on",filterShaky);
+  render();
+});
+$("resetBtn").addEventListener("click",()=>{
+  if(confirm("Clear all shaky marks?")){ shaky={}; save(); filterShaky=false; $("filterBtn").classList.remove("on"); render(); }
+});
+
+(async function init(){ await load(); render(); })();
+</script>

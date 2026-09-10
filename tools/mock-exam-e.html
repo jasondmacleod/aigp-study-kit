@@ -1,0 +1,805 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIGP Mock Exam E</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#EBEEE9; --surface:#FBFCFA; --surface-2:#F3F5F1;
+    --ink:#1A241F; --ink-soft:#586A61; --ink-faint:#8A9890;
+    --line:#D4DAD2; --line-strong:#C0C8BE;
+    --pine:#2C6E56; --pine-deep:#1E5040; --pine-wash:#E4EEE8;
+    --amber:#A9752A; --amber-wash:#F3EAD8;
+    --rust:#A5432C; --rust-wash:#F2E1DB;
+    --shadow:0 1px 0 rgba(26,36,31,.04), 0 6px 22px -12px rgba(26,36,31,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--canvas); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif; font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px; margin:0 auto; padding:22px 18px 120px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--pine); font-weight:600; margin:0 0 6px}
+  h1{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:clamp(26px,6.2vw,36px);
+    line-height:1.05; letter-spacing:-.02em; margin:0 0 12px}
+  .lede{font-size:14px; color:var(--ink-soft); margin:0 0 18px; max-width:60ch}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    padding:16px 17px; box-shadow:var(--shadow); margin-bottom:14px}
+  .spec{display:flex; flex-wrap:wrap; gap:6px 8px; margin:0 0 16px}
+  .chip{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); padding:4px 9px; border-radius:6px}
+  .chip b{color:var(--ink); font-weight:600}
+  .btn{appearance:none; cursor:pointer; font-family:"IBM Plex Mono",monospace; font-size:12px;
+    letter-spacing:.04em; border-radius:8px; padding:9px 15px; transition:.14s;
+    border:1px solid var(--line-strong); background:var(--surface-2); color:var(--ink-soft)}
+  .btn:hover{color:var(--ink); border-color:var(--ink-faint)}
+  .btn.primary{background:var(--pine-deep); border-color:var(--pine-deep); color:#F7FAF8; font-weight:600}
+  .btn.primary:hover{background:var(--pine)}
+  .btn:disabled{opacity:.45; cursor:not-allowed}
+  .bar{position:sticky; top:0; z-index:20; background:rgba(235,238,233,.94);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line); margin:0 -18px 16px; padding:10px 18px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .timer{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:19px;
+    letter-spacing:-.01em; font-variant-numeric:tabular-nums}
+  .timer.warn{color:var(--amber)} .timer.crit{color:var(--rust)}
+  .bar-meta{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-soft)}
+  .bar .spacer{margin-left:auto}
+  .track{height:5px; border-radius:20px; background:var(--surface-2); border:1px solid var(--line);
+    overflow:hidden; flex:1 1 100%; margin-top:2px}
+  .fill{height:100%; width:0%; background:linear-gradient(90deg,var(--pine),var(--pine-deep)); transition:width .3s}
+  .qhead{display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap}
+  .qnum{font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600; color:var(--pine)}
+  .dom{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-faint);
+    background:var(--surface-2); border:1px solid var(--line); padding:2px 7px; border-radius:5px}
+  .msbadge{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; color:var(--amber);
+    background:var(--amber-wash); border:1px solid var(--amber); padding:2px 7px; border-radius:5px}
+  .stem{font-size:15.5px; line-height:1.55; margin:0 0 6px}
+  .msnote{font-size:12.5px; color:var(--amber); font-weight:600; margin:0 0 12px}
+  .opts{display:flex; flex-direction:column; gap:8px}
+  .opt{display:flex; align-items:flex-start; gap:11px; text-align:left; width:100%;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 13px;
+    cursor:pointer; font:inherit; font-size:14.5px; line-height:1.45; color:var(--ink); transition:.12s}
+  .opt:hover:not(:disabled){border-color:var(--line-strong); background:var(--surface-2)}
+  .opt:disabled{cursor:default}
+  .opt .key{flex:0 0 auto; font-family:"IBM Plex Mono",monospace; font-size:12.5px; font-weight:600;
+    color:var(--ink-faint); width:15px}
+  .opt.sel{border-color:var(--pine); background:var(--pine-wash); box-shadow:inset 0 0 0 1px var(--pine)}
+  .opt.sel .key{color:var(--pine-deep)}
+  .opt.correct{border-color:var(--pine); background:var(--pine-wash)}
+  .opt.correct .key{color:var(--pine-deep)}
+  .opt.wrong{border-color:var(--rust); background:var(--rust-wash)}
+  .opt.wrong .key{color:var(--rust)}
+  .opt.missed{border-color:var(--amber); background:var(--amber-wash)}
+  .opt.missed .key{color:var(--amber)}
+  .tag{margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; white-space:nowrap}
+  .opt.correct .tag{color:var(--pine-deep)} .opt.wrong .tag{color:var(--rust)} .opt.missed .tag{color:var(--amber)}
+  .nav{display:flex; gap:9px; align-items:center; margin-top:16px; flex-wrap:wrap}
+  .flagbtn.on{background:var(--amber-wash); border-color:var(--amber); color:var(--amber); font-weight:600}
+  .explain{margin:14px 0 0; padding:13px 14px; border-radius:10px; background:var(--surface-2);
+    border:1px solid var(--line); font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
+  .explain b{color:var(--ink); font-weight:600}
+  .explain .lbl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--pine); display:block; margin-bottom:5px; font-weight:600}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(38px,1fr)); gap:6px; margin-top:12px}
+  .cell{aspect-ratio:1; border-radius:7px; border:1px solid var(--line); background:var(--surface);
+    font-family:"IBM Plex Mono",monospace; font-size:12px; cursor:pointer; color:var(--ink-soft); transition:.12s}
+  .cell:hover{border-color:var(--ink-faint)}
+  .cell.answered{background:var(--pine-wash); border-color:var(--pine); color:var(--pine-deep); font-weight:600}
+  .cell.flagged{background:var(--amber-wash); border-color:var(--amber); color:var(--amber); font-weight:600}
+  .cell.current{outline:2px solid var(--pine); outline-offset:1px}
+  .cell.ok{background:var(--pine-wash); border-color:var(--pine); color:var(--pine-deep)}
+  .cell.bad{background:var(--rust-wash); border-color:var(--rust); color:var(--rust); font-weight:600}
+  .score-hero{text-align:center; padding:8px 0 4px}
+  .big{font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:52px; letter-spacing:-.03em; line-height:1}
+  .big.pass{color:var(--pine-deep)} .big.fail{color:var(--rust)}
+  .verdict{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.1em;
+    text-transform:uppercase; margin-top:6px; font-weight:600}
+  .verdict.pass{color:var(--pine-deep)} .verdict.fail{color:var(--rust)}
+  .caveat{font-size:12.5px; color:var(--ink-faint); margin:10px auto 0; max-width:46ch; line-height:1.5}
+  table{width:100%; border-collapse:collapse; margin-top:6px; font-size:13.5px}
+  th,td{text-align:left; padding:9px 6px; border-bottom:1px solid var(--line)}
+  th{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--ink-faint); font-weight:600}
+  td.n{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+  .minibar{height:6px; border-radius:20px; background:var(--surface-2); overflow:hidden;
+    border:1px solid var(--line); min-width:70px}
+  .minibar i{display:block; height:100%; background:var(--pine)}
+  .minibar i.low{background:var(--rust)} .minibar i.mid{background:var(--amber)}
+  h2{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:17px; letter-spacing:-.01em; margin:0 0 4px}
+  .sub{font-size:13px; color:var(--ink-soft); margin:0 0 12px}
+
+  .bokcite{margin-top:11px; padding:10px 12px; border-radius:8px; background:var(--pine-wash);
+    border:1px solid var(--pine); font-size:12.5px; line-height:1.5; color:var(--pine-deep)}
+  .bokcite .code{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:11px;
+    letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:4px}
+  .bokcite i{font-style:normal; color:var(--ink-soft)}
+  .fb{margin:14px 0 0; padding:13px 14px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface-2); font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
+  .fb.right{border-color:var(--pine); background:var(--pine-wash)}
+  .fb.wrong{border-color:var(--rust); background:var(--rust-wash)}
+  .fb b{color:var(--ink); font-weight:600}
+  .fb .lbl{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; display:block; margin-bottom:5px; font-weight:600; color:var(--pine)}
+  .fb.wrong .lbl{color:var(--rust)}
+  .modehint{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--amber);
+    background:var(--amber-wash); border:1px solid var(--amber); padding:3px 8px; border-radius:5px}
+  .sybcite{margin-top:7px; padding:9px 12px; border-radius:8px; background:var(--amber-wash);
+    border:1px solid var(--amber); font-size:12.5px; line-height:1.5; color:var(--ink)}
+  .sybcite .code{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:11px;
+    letter-spacing:.08em; text-transform:uppercase; display:block; margin-bottom:4px; color:var(--amber)}
+  .sybcite i{font-style:normal; color:var(--ink-soft)}
+  .scenario{background:var(--surface-2); border:1px solid var(--line-strong); border-left:3px solid var(--pine);
+    border-radius:10px; padding:13px 15px; margin:0 0 14px}
+  .scenario.rev{margin-bottom:12px}
+  .sc-head{display:flex; align-items:baseline; gap:10px; margin-bottom:8px}
+  .sc-tag{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; letter-spacing:.1em;
+    text-transform:uppercase; color:#F7FAF8; background:var(--pine-deep); padding:3px 8px; border-radius:5px}
+  .sc-pos{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint); margin-left:auto}
+  .sc-body{font-size:13.5px; line-height:1.6; color:var(--ink-soft)}
+  .sc-body p{margin:0 0 8px} .sc-body p:last-child{margin-bottom:0}
+  .sc-body b{color:var(--ink); font-weight:600}
+  .cell.scen{text-decoration:underline; text-decoration-color:var(--pine); text-underline-offset:2px}
+  #checkBtn{background:var(--pine-deep); border-color:var(--pine-deep); color:#F7FAF8; font-weight:600}
+  #checkBtn:hover{background:var(--pine)}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <section id="startScreen">
+    <p class="eyebrow">Mock Exam E · high-yield reframe</p>
+    <h1>High-Yield Reframe</h1>
+    <p class="lede">Built after reading IAPP's own Body of Knowledge and study guide. This exam corrects two things the Wiley book got wrong for you: the domain weighting, and whole topics the book never covers. It also includes multi-select questions, which the real exam uses and Exams A and B did not.</p>
+    <div class="spec">
+      <span class="chip"><b>68</b> questions</span>
+      <span class="chip"><b>122</b> min</span>
+      <span class="chip"><b>4</b> multi-select</span>
+      <span class="chip">weights <b>8/12/14/16</b></span>
+    </div>
+    <div class="card">
+      <h2>Why this exam is weighted differently</h2>
+      <p class="sub" style="margin-bottom:10px">I measured how often each competency is drilled across Exams A–D against its share of the BoK blueprint. Four came out starved. This exam over-weights them deliberately.</p>
+      <table>
+        <tr><th>Competency</th><th>Drilled vs blueprint</th><th>Here</th></tr>
+        <tr><td><b>III.C</b> Release, monitoring, maintenance</td><td class="n">0.48×</td><td class="n">12 Qs</td></tr>
+        <tr><td><b>IV.A</b> Deploy decision factors</td><td class="n">0.55×</td><td class="n">8 Qs</td></tr>
+        <tr><td><b>IV.B</b> Assessing the AI system</td><td class="n">0.57×</td><td class="n">8 Qs</td></tr>
+        <tr><td><b>I.C</b> Lifecycle &amp; third-party policy</td><td class="n">0.80×</td><td class="n">6 Qs</td></tr>
+      </table>
+      <p class="sub" style="margin:12px 0 0">The remaining 16 questions hit indicators drilled only once or twice across the whole set — III.B.2, II.D.1, II.C.5, II.B.3, II.B.4, II.C.3, II.A.2 and I.A.4.</p>
+    </div>
+    <div class="card">
+      <h2>Reframed, not repeated</h2>
+      <p class="sub">These test knowledge you have already met, approached from angles that force retrieval rather than recognition: principles in tension rather than defined, near-misses rather than incidents, what a vendor assessment <i>cannot</i> tell you, and tradeoffs named honestly rather than resolved away. If you can answer these, you understand the material rather than the question format.</p>
+      <button class="btn primary" id="startBtn">Start exam</button>
+      <button class="btn" id="practiceBtn">Untimed practice</button>
+    </div>
+  </section>
+
+  <section id="examScreen" hidden>
+    <div class="bar">
+      <span class="timer" id="timer">122:00</span>
+      <span class="bar-meta" id="progress">Question 1 of 68</span>
+      <span class="modehint" id="modehint" hidden>practice · answers shown</span>
+      <span class="spacer"></span>
+      <button class="btn" id="submitBtn">Submit exam</button>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+    <div class="card">
+      <div class="qhead"><span class="qnum" id="qnum">Q1</span><span class="dom" id="qdom"></span><span class="msbadge" id="msbadge" hidden>MULTI-SELECT</span></div>
+      <div class="scenario" id="scenario" hidden></div>
+      <p class="stem" id="stem"></p>
+      <p class="msnote" id="msnote" hidden></p>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="feedback" hidden></div>
+      <div class="nav">
+        <button class="btn" id="prevBtn">← Previous</button>
+        <button class="btn" id="nextBtn">Next →</button>
+        <button class="btn flagbtn" id="flagBtn">⚑ Flag</button>
+        <button class="btn" id="clearBtn">Clear answer</button>
+        <button class="btn" id="checkBtn" hidden>Check answer</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Question navigator</h2>
+      <p class="sub" id="navSub"></p>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="resultScreen" hidden>
+    <p class="eyebrow">Results · Mock Exam E</p>
+    <div class="card">
+      <div class="score-hero">
+        <div class="big" id="rawBig">0%</div>
+        <div class="verdict" id="verdict"></div>
+        <p class="caveat" id="caveat"></p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Domain breakdown</h2>
+      <p class="sub">Weakest first — your re-study order.</p>
+      <table id="domTable"></table>
+    </div>
+    <div class="card">
+      <h2>Review</h2>
+      <p class="sub">Red = missed.</p>
+      <div class="grid" id="reviewGrid"></div>
+      <div class="nav">
+        <button class="btn" id="reviewMissed">Review missed only</button>
+        <button class="btn" id="reviewAll">Review all</button>
+        <button class="btn" id="retakeBtn">Retake</button>
+      </div>
+    </div>
+    <div id="reviewList"></div>
+  </section>
+</div>
+
+<script>
+/* ms:true = multi-select; c is an array; pick = required number */
+const Q=[
+{d:"I",t:"Principles in tension",s:"To reduce disparate error rates across demographic groups, a team proposes collecting additional sensitive attributes so it can measure and correct for them. Which pair of responsible-AI principles is in direct tension here?",
+o:["Fairness and privacy","Accountability and safety","Transparency and reliability","Human-centricity and security"],c:0,
+w:"Measuring fairness accurately often requires the very sensitive data that <b>privacy</b> principles push you to minimise \u2014 you cannot correct a disparity you are not permitted to observe. This is the classic tension, resolved through controlled access, aggregation, or third-party measurement rather than by abandoning either principle. The other pairings describe principles that generally reinforce rather than oppose each other.",bok:{c:"I.A.4",t:"Identify and apply the common principles of responsible AI (e.g., fairness, safety and reliability, privacy and security, transparency and explainability, accountability and human-centricity)."},syb:{c:"Ch 1",s:"Principles of Responsible AI"}},
+
+{d:"I",t:"Principle violation",s:"A model is accurate, robust, secure, and its outputs are fair across every measured group \u2014 but no one, including its builders, can account for why it reaches a given decision. Which responsible-AI principle does this most clearly fail?",
+o:["Transparency and explainability","Safety and reliability","Privacy and security","Accountability"],c:0,
+w:"Performing well on every other axis while remaining inscrutable is precisely a <b>transparency and explainability</b> failure. Note the near-miss: accountability concerns <i>who answers</i> for the outcome, which could still be clearly assigned here \u2014 the gap is that no one can explain the reasoning. Safety, reliability, privacy and security are all satisfied in the scenario as described.",bok:{c:"I.A.4",t:"Identify and apply the common principles of responsible AI (e.g., fairness, safety and reliability, privacy and security, transparency and explainability, accountability and human-centricity)."},syb:{c:"Ch 1",s:"Principles of Responsible AI \u2192 Transparency and Explainability"}},
+
+{d:"I",t:"Lifecycle stage failure",s:"An organization's AI policy covers development and deployment thoroughly. A model runs for two years, quietly degrades, and no one notices until customers complain. Which lifecycle policy stage was missing?",
+o:["Use case assessment","Data acquisition and use","Deployment and monitoring","Model and system development"],c:2,
+w:"The failure sits at <b>deployment and monitoring</b> \u2014 the stage that keeps watching after launch. A lifecycle policy has to span use case assessment, risk management, ethics by design, data acquisition, development, training and testing, deployment and monitoring, documentation, and incident management. Policies that stop at go-live are the most common structural gap.",bok:{c:"I.C.1",t:"Create and implement policies to ensure oversight and accountability across all AI life cycle stages (e.g., use case assessment, risk management, ethics by design, data acquisition and use, model and system development, training and testing, deployment and monitoring, documentation and reporting, and incident management)."},syb:{c:"Ch 3",s:"Oversight in the Age of Autonomous Decision-making \u2192 The Lifecycle Policy Model"}},
+
+{d:"I",t:"Incident policy",s:"Why does the study guide treat incident management as a required element of AI lifecycle policy rather than an operational detail?",
+o:["Because AI systems fail in ways conventional IT incident processes are not designed to detect or classify","Because regulators audit incident logs more often than any other artifact","Because incident management replaces the need for monitoring","Because it is the only lifecycle stage with legal consequences"],c:0,
+w:"AI failures are frequently <b>not outages</b> \u2014 a model can be fully available and performing to spec while producing biased, drifting, or misaligned outcomes. Conventional IT incident processes are tuned to detect breakage, so AI needs its own definitions, classification and escalation paths. Monitoring detects; incident management responds \u2014 they are complements, and legal consequences attach across many stages.",bok:{c:"I.C.1",t:"Create and implement policies to ensure oversight and accountability across all AI life cycle stages (e.g., use case assessment, risk management, ethics by design, data acquisition and use, model and system development, training and testing, deployment and monitoring, documentation and reporting, and incident management)."},syb:{c:"Ch 3",s:"Oversight in the Age of Autonomous Decision-making \u2192 Incident Management: Planning for Failure"}},
+
+{d:"I",t:"IP policy update",s:"Reviewing which existing policies need revision for AI, a team has updated privacy, security and data governance. Which remaining policy area does the BoK explicitly name?",
+o:["Intellectual property","Travel and expenses","Physical site access","Business continuity"],c:0,
+w:"The BoK names <b>data privacy, security, data governance and intellectual property</b> as the existing policies to evaluate and update for AI. IP is the one teams forget: training-data licensing, ownership of model outputs, and the choice between patent and trade secret protection all need policy positions that pre-AI IP policy never contemplated.",bok:{c:"I.C.2",t:"Evaluate and update existing policies (e.g., data privacy, security, data governance and intellectual property) for AI."},syb:{c:"Ch 3",s:"Evaluate and Update Existing Data Privacy and Security Policies for AI \u2192 Key Policy Areas to Evaluate and Update"}},
+
+{d:"I",t:"Data subject rights",s:"A customer exercises their right to erasure. The company deletes the record from its database, but the data was used to train a deployed model. What does the study guide identify as the governance problem?",
+o:["Deleting the source record does not remove its influence from the trained model, so the policy needs an AI-specific answer","Erasure rights do not apply to data used in training","The model must always be retrained from scratch on every erasure request","Erasure requests must be refused once training has begun"],c:0,
+w:"Deleting a row does not unlearn it. A model retains the influence of training data, so <b>data subject rights policies need an AI-specific position</b> \u2014 covering when retraining is triggered, what unlearning techniques apply, and how the organization documents its approach. Rights do apply, refusal is not an option, and full retraining on every request is rarely proportionate.",bok:{c:"I.C.2",t:"Evaluate and update existing policies (e.g., data privacy, security, data governance and intellectual property) for AI."},syb:{c:"Ch 3",s:"Evaluate and Update Existing Data Privacy and Security Policies for AI \u2192 Data Subject Rights in AI Contexts"}},
+
+{d:"I",t:"Acceptable use",s:"Staff begin pasting internal documents into a public generative AI tool to summarise them. Which third-party policy instrument most directly addresses this?",
+o:["A procurement policy requiring vendor security questionnaires","A data retention schedule","An acceptable use policy governing employee use of external AI services","A supplier code of conduct"],c:2,
+w:"This is employee behaviour, not a purchase \u2014 so the control is an <b>acceptable use policy</b> defining which external AI services may be used, with what data, and under what conditions. The BoK names acceptable use alongside procurement, supply chain and human resources precisely because AI risk enters through staff behaviour, not only through contracts. Procurement controls never engage because nothing was bought.",bok:{c:"I.C.3",t:"Create, update and implement policies, assessments and contracts to manage third-party risk (e.g., procurement, supply chain, human resources and acceptable use)."},syb:{c:"Ch 3",s:"Policies to Manage Third-party Risk \u2192 Core Policy Objectives"}},
+
+{d:"I",t:"Supply chain depth",s:"A vendor's AI service is itself built on a third party's foundation model, which was trained by a fourth party. What does effective AI supply chain governance require?",
+o:["Visibility extending beyond the immediate vendor, with contractual flow-down of key obligations","Direct contracts with every party in the chain","Refusing any vendor that relies on subprocessors","Accepting that only the immediate vendor's practices are assessable"],c:0,
+w:"You will rarely contract with parties beyond your direct vendor, so governance depends on <b>visibility into the chain plus flow-down obligations</b> \u2014 requiring your vendor to impose equivalent terms on its own suppliers and to disclose material dependencies. Direct contracts with everyone is impractical, refusing all subprocessing would exclude most of the market, and accepting one-layer visibility leaves the real risk unassessed.",bok:{c:"I.C.3",t:"Create, update and implement policies, assessments and contracts to manage third-party risk (e.g., procurement, supply chain, human resources and acceptable use)."},syb:{c:"Ch 3",s:"Policies to Manage Third-party Risk \u2192 AI Supply Chain Governance"}},
+
+{d:"II",t:"Privacy by design",s:"At what point does privacy by design most meaningfully enter an ML pipeline?",
+o:["Embedded across the pipeline \u2014 collection, feature engineering, training and serving \u2014 with privacy-preserving defaults at each stage","At the point of publishing the privacy notice","Only during the data collection stage","At the final security review before release"],c:0,
+w:"Privacy by design means privacy considerations and <b>protective defaults built into every stage</b>, not a checkpoint. Restricting it to collection misses feature engineering that reconstructs sensitive attributes and serving that logs sensitive prompts. A notice communicates decisions already made, and a final review arrives too late to change architecture.",bok:{c:"II.A.2",t:"Understand how data minimization and privacy by design requirements apply to AI."},syb:{c:"Ch 4",s:"Data Minimization and Privacy by Design in AI \u2192 Embedding Privacy by Design in MLOps Pipelines"}},
+
+{d:"II",t:"Minimization tradeoff",s:"A team argues that data minimization inherently degrades model performance and should therefore yield to accuracy. What is the strongest counter?",
+o:["Minimization is a recommended practice rather than a requirement","Accuracy always outweighs privacy where the use case is beneficial","Minimization applies only to special-category data","More data is not reliably better data; necessity is assessed against the specified purpose, and excess data adds breach and compliance exposure without guaranteed benefit"],c:3,
+w:"The premise is weak: <b>additional data does not reliably improve a model</b>, and quality and relevance usually matter more than volume. Minimization asks what is necessary for the stated purpose, and surplus data enlarges breach exposure and compliance burden regardless of accuracy. It is a binding principle, not advisory, and applies to all personal data.",bok:{c:"II.A.2",t:"Understand how data minimization and privacy by design requirements apply to AI."},syb:{c:"Ch 4",s:"Data Minimization and Privacy by Design in AI \u2192 Data Minimization"}},
+
+{"d":"I","t":"RPA","sc":{"id":"E1","n":"Scenario A","txt":"<p><b>Tern Automation</b> sells two products. The first is a software tool that logs into web portals and re-keys invoice data between systems by following fixed scripted rules. The second is a customer-support assistant built on a large language model.</p>\n<p>Tern's marketing describes both as \"AI-powered.\" Its new governance lead is deciding which products belong in the AI inventory and what governance each warrants. She is also reviewing a proposal to analyse free-form engineer callout notes — unstructured text in several languages — to predict which customers are at risk of cancelling.</p>"},"s":"Tern's first product mimics a clerk's keyboard-and-mouse actions across web portals, following fixed scripted rules. How should Tern's inventory classify this class of software?","o":["As generative AI, because it produces new database entries","As a limited-memory AI system, because it processes screens in sequence","As robotic process automation — rule-based task automation that is not by itself an AI system, though it can be augmented with AI components","As agentic AI, because it operates other software without supervision"],"c":2,"w":"<b>Robotic process automation</b> automates repetitive rule-based digital work by mimicking human actions on software interfaces. Built on fixed scripts, it involves no perception, reasoning or learning — so it falls outside the definition of an AI system, which is exactly the inventory judgment Tern faces. RPA can be augmented with AI components, which would change that answer. It generates nothing new, retains no learned state between runs, and follows scripts rather than pursuing goals autonomously.","bok":{"c":"I.A.1","t":"Know the generally accepted definitions and types of AI."},"syb":{"c":"Ch 1","s":"The Types of AI"}},
+
+{d:"I",t:"Inventory scope",sc:{id:"E1",n:"Scenario A",txt:"<p><b>Tern Automation</b> sells two products. The first is a software tool that logs into web portals and re-keys invoice data between systems by following fixed scripted rules. The second is a customer-support assistant built on a large language model.</p>\n<p>Tern's marketing describes both as \"AI-powered.\" Its new governance lead is deciding which products belong in the AI inventory and what governance each warrants. She is also reviewing a proposal to analyse free-form engineer callout notes \u2014 unstructured text in several languages \u2014 to predict which customers are at risk of cancelling.</p>"},s:"Which product belongs in Tern's AI inventory with fuller governance, and on what basis?",
+o:["Both equally, because marketing describes both as AI-powered","Neither, because both are commercial software products","Only the scripted invoice tool, because it takes actions in other systems","Primarily the language-model assistant, because it involves learning and probabilistic output rather than fixed rules"],c:3,
+w:"An AI system involves elements of <b>perception, reasoning or learning</b>, which distinguishes it from fixed business rules. The language-model assistant qualifies and brings probabilistic output, opacity and drift with it; the scripted tool is deterministic automation that may still warrant operational controls but not the full AI overlay. Marketing language is not a classification basis \u2014 a point the scenario makes deliberately.",bok:{c:"I.A.1",t:"Know the generally accepted definitions and types of AI."},syb:{c:"Ch 1",s:"The Types of AI \u2192 AI Functionalities"}},
+
+{d:"IV",t:"NLP",sc:{id:"E1",n:"Scenario A",txt:"<p><b>Tern Automation</b> sells two products. The first is a software tool that logs into web portals and re-keys invoice data between systems by following fixed scripted rules. The second is a customer-support assistant built on a large language model.</p>\n<p>Tern's marketing describes both as \"AI-powered.\" Its new governance lead is deciding which products belong in the AI inventory and what governance each warrants. She is also reviewing a proposal to analyse free-form engineer callout notes \u2014 unstructured text in several languages \u2014 to predict which customers are at risk of cancelling.</p>"},s:"Tern wants to analyse free-form engineer callout notes, written in several languages, to predict cancellation risk. Which technique is most applicable?",
+o:["Natural language processing","Regression on structured numeric variables","Dimensionality reduction","Anomaly detection on transaction volumes"],c:0,
+w:"Unstructured free-form text in multiple languages calls for <b>natural language processing</b>, which is built for exactly that input. Regression predicts numeric outcomes from numeric variables; dimensionality reduction shrinks a feature space rather than interpreting language; anomaly detection finds outliers in structured signals. The input type drives the technique choice.",bok:{c:"IV.A.2",t:"Understand the differences in AI model types (e.g., classic vs. generative, proprietary vs. open source, small vs. large, and language vs. multimodal capabilities)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"II",t:"Synthetic media",s:"A brand runs an advertisement featuring an AI-generated likeness of a real person who never endorsed the product. Beyond publicity and likeness claims, which consumer-protection theory applies?",
+o:["Deception \u2014 implying an endorsement that does not exist is materially misleading to consumers","No consumer protection theory applies to synthetic imagery","Consumer protection applies only where a product is defective","Only if the advertisement omits a disclaimer in small print"],c:0,
+w:"An implied endorsement that never happened is a <b>material misrepresentation</b> capable of affecting a purchasing decision \u2014 squarely a deceptive practice. Deepfake advertising is a named emerging risk area. Synthetic media is not exempt, consumer protection is not limited to defective products, and a buried disclaimer does not cure a misleading overall impression.",bok:{c:"II.B.3",t:"Understand how consumer protection laws apply to AI (e.g., prohibiting unfair and deceptive acts or practices)."},syb:{c:"Ch 5",s:"How Consumer Protection Laws Apply to AI \u2192 Emerging Risks: Deepfakes, Misinformation, and Emotional Manipulation"}},
+
+{d:"II",t:"Emotional manipulation",s:"A companion app detects when users are lonely and times upgrade prompts to those moments. Which consumer-protection concern is most directly raised?",
+o:["Exploiting an identified emotional vulnerability to influence a transaction is an unfair practice, independent of whether pricing is disclosed","None, since the pricing is disclosed","This is permissible personalization","It is a concern only if the user is a minor"],c:0,
+w:"<b>Unfairness</b> is a distinct theory from deception: a practice can be perfectly truthful and still unfair if it causes substantial harm consumers cannot reasonably avoid. Deliberately timing an offer to a detected vulnerability is the paradigm case, and it is what separates manipulation from personalization. Accurate pricing does not cure it, and it is not limited to minors.",bok:{c:"II.B.3",t:"Understand how consumer protection laws apply to AI (e.g., prohibiting unfair and deceptive acts or practices)."},syb:{c:"Ch 5",s:"How Consumer Protection Laws Apply to AI \u2192 AI-powered Deception and Manipulation"}},
+
+{d:"II",t:"Failure to warn",s:"An AI-assisted diagnostic tool performs poorly on a patient subgroup. The manufacturer knows this but the instructions for use do not mention it. Which product liability theory is most directly engaged?",
+o:["Design defect","Manufacturing defect","Failure to warn","No theory, since the limitation is inherent to AI"],c:2,
+w:"Known limitations that users need in order to use a product safely must be disclosed \u2014 withholding them is <b>failure to warn</b>, and it attaches even where the design is sound and manufacture correct. A design defect would mean the design itself is unreasonably dangerous; a manufacturing defect means deviation from that design. Inherent limitations do not excuse non-disclosure; they are precisely what must be warned about.",bok:{c:"II.B.4",t:"Understand how product liability laws apply to AI (e.g., prohibiting design and manufacturing defects)."},syb:{c:"Ch 5",s:"How Product Liability Laws Apply to AI \u2192 Failure to Warn: Disclosing AI Risks"}},
+
+{d:"II",t:"AI-SBOM",s:"What is the primary product-liability rationale for maintaining an AI software bill of materials?",
+o:["It shortens model training time","It replaces the need for testing documentation","It satisfies the EU AI Act's conformity assessment on its own","It records the components, models, datasets and dependencies in a product, so defective elements can be traced and remediated"],c:3,
+w:"An <b>AI-SBOM</b> makes composition traceable: when a component, pretrained model or dataset is later found defective or improperly licensed, you can identify every product affected and act. Without it, remediation becomes guesswork. It has no bearing on training time, does not replace testing records, and is one input to conformity work rather than a substitute for it.",bok:{c:"II.B.4",t:"Understand how product liability laws apply to AI (e.g., prohibiting design and manufacturing defects)."},syb:{c:"Ch 5",s:"How Product Liability Laws Apply to AI \u2192 What to Track in an AI-SBOM"}},
+
+{d:"II",t:"Quality management",s:"Among the high-risk obligations, what does the quality management system requirement primarily ensure?",
+o:["That documented, repeatable processes govern design, development, testing and post-market activity \u2014 so compliance is systematic rather than per-project heroics","That the model achieves a minimum accuracy threshold","That an external auditor approves every release","That the system is certified to ISO/IEC 42001"],c:0,
+w:"A <b>QMS</b> is about repeatable process: documented procedures for design control, testing, change management, documentation and post-market monitoring, so conformity does not depend on who happens to be running a given project. It sets no accuracy floor, does not mandate external per-release approval, and while ISO/IEC 42001 helps demonstrate it, certification is not the requirement.",bok:{c:"II.C.3",t:"Understand the key requirements around human oversight, transparency and notification, and quality management."},syb:{c:"Ch 6",s:"Classification Requirements \u2192 High-risk AI: Full Compliance Framework"}},
+
+{d:"III",t:"Consensus and outcomes",sc:{id:"E2",n:"Scenario B",txt:"<p><b>Ravensworth Group</b> is finalising an AI governance programme. The steering group is arguing about method: one director wants a named internal sceptic to challenge every proposal, another wants the team measured on following the documented process, a third wants decisions driven by projected cost savings, and the AI governance lead has proposed that planning and design decisions be reached by consensus across the represented functions.</p>\n<p>Ravensworth has also just been told that a model it retired eighteen months ago is still cited in a live customer dispute.</p>"},s:"Which of the four positions in Ravensworth's steering group best reflects a principle that should be applied consistently?",
+o:["A named internal sceptic challenging every proposal","Measuring the governance team on adherence to the documented process","Reaching planning and design decisions by consensus across represented functions","Letting projected cost savings drive prioritisation"],c:2,
+w:"<b>Consensus in planning and design</b> is what integrates governance across the business rather than isolating it in one function. A standing dissenter tends to silo governance and breed adversarial dynamics; measuring the team on process adherence rewards activity over outcomes, when the team should be focused on outcomes; and financial considerations matter but should not lead.",bok:{c:"III.A.3",t:"Apply the policies, procedures, best practices and ethical considerations to designing and building the AI system (e.g., purpose of AI, requirements gathering, architecture and model selection, human oversight, data analysis, metric and threshold evaluation, stakeholder engagement and feedback, and operational controls)."},syb:{c:"Ch 8",s:"AI System Design Considerations"}},
+
+{d:"IV",t:"Retired model artifacts",sc:{id:"E2",n:"Scenario B",txt:"<p><b>Ravensworth Group</b> is finalising an AI governance programme. The steering group is arguing about method: one director wants a named internal sceptic to challenge every proposal, another wants the team measured on following the documented process, a third wants decisions driven by projected cost savings, and the AI governance lead has proposed that planning and design decisions be reached by consensus across the represented functions.</p>\n<p>Ravensworth has also just been told that a model it retired eighteen months ago is still cited in a live customer dispute.</p>"},s:"A model Ravensworth retired eighteen months ago is cited in a live customer dispute. What does this most directly vindicate?",
+o:["Deleting model artifacts promptly on retirement to limit discovery exposure","Preserving model versions, decision logs and documentation through retirement, per applicable retention obligations","Keeping the retired model running in read-only mode indefinitely","Transferring all retired-model records to the vendor for storage"],c:1,
+w:"Retirement must <b>preserve the evidence trail</b> \u2014 model versions, decision records and documentation \u2014 because affected individuals can contest historical decisions and regulators can examine them long after shutdown. Prompt deletion destroys your ability to explain or defend what happened; running the model indefinitely sustains an ungoverned system; and handing records to a vendor surrenders control of your own evidence.",bok:{c:"IV.C.7",t:"Create and implement a policy and controls to deactivate or localize an AI system as necessary (e.g., due to regulatory requirements or performance issues)."},syb:{c:"Ch 12",s:"AI System Retirement \u2192 Data and Model Artifacts: Archiving and Disposal"}},
+
+{"d":"IV","t":"Continued operation","sc":{"id":"E2","n":"Scenario B","txt":"<p><b>Ravensworth Group</b> is finalising an AI governance programme. The steering group is arguing about method: one director wants a named internal sceptic to challenge every proposal, another wants the team measured on following the documented process, a third wants decisions driven by projected cost savings, and the AI governance lead has proposed that planning and design decisions be reached by consensus across the represented functions.</p>\n<p>Ravensworth has also just been told that a model it retired eighteen months ago is still cited in a live customer dispute.</p>"},"s":"Ravensworth's deactivation policy lists conditions under which a model must come out of service. Which finding most clearly requires deactivation rather than continued operation with mitigations?","o":["Monitoring confirms a recent mitigation has restored performance to within thresholds","No feasible mitigation exists and the risk now sits above the organization's documented tolerance","The model's limitations are documented and communicated to its users","A scheduled retraining is already planned for next quarter"],"c":1,"w":"Deactivation is required when the risk cannot feasibly be mitigated <i>and</i> exceeds what the organization has documented it will tolerate — operating past that point is unauthorized risk acceptance. A verified fix, documented limitations, or an upcoming retrain each describe situations compatible with continued, monitored operation. Note that documenting a limitation does not resolve it; what matters is whether the residual risk sits within tolerance.","bok":{"c":"IV.C.7","t":"Create and implement a policy and controls to deactivate or localize an AI system as necessary (e.g., due to regulatory requirements or performance issues)."},"syb":{"c":"Ch 12","s":"AI System Retirement"}},
+
+{d:"II",t:"Frameworks",s:"Which statement about voluntary AI frameworks is <b>incorrect</b>?",
+o:["The NIST AI RMF and Playbook are intended for voluntary use","The OECD AI Principles influenced the EU AI Act","Adopting the OECD Principles discharges EU AI Act obligations","The Singapore Model AI Governance Framework is non-binding"],c:2,
+w:"Voluntary alignment does <b>not</b> discharge a binding regulation \u2014 only the Act's own obligations satisfy the Act, however closely a framework informed it. The RMF and Playbook are voluntary, the OECD Principles did influence the Act, and Singapore's framework is non-binding guidance; those three statements are accurate.",bok:{c:"II.D.1",t:"Understand the Organisation for Economic Co-operation and Development (OECD) principles, framework, policies and recommended practices for trustworthy AI."},syb:{c:"Ch 7",s:"OECD Principles"}},
+
+{d:"II",t:"Notification duties",s:"A deployer of a high-risk AI system uses it to make decisions about employees. Beyond internal governance, what notification obligation applies?",
+o:["None, since the provider handles all transparency","Notifying the market surveillance authority before each decision","Informing the affected workers and their representatives that the system will be used on them","Publishing the model's technical documentation publicly"],c:2,
+w:"Deployers using high-risk AI in the workplace must <b>inform affected workers and their representatives</b> before putting the system into use \u2014 a duty that sits with the deployer, not the provider, because only the deployer knows the actual deployment context. Authorities are notified of serious incidents rather than routine decisions, and technical documentation goes to regulators and deployers rather than the public.",bok:{c:"II.C.3",t:"Understand the key requirements around human oversight, transparency and notification, and quality management."},syb:{c:"Ch 6",s:"Classification Requirements \u2192 Limited-risk AI: Targeted Transparency Obligations"}},
+
+{d:"II",t:"Escalation and recurrence",s:"An organization is penalized for a violation, remediates it, then commits a similar violation eighteen months later. How does the enforcement framework treat this?",
+o:["The second penalty is capped at the first penalty's amount","Recurrence is treated identically to a first offence","Prior violations and recurrence are aggravating factors that increase penalty severity","Remediation of the first violation immunises the second"],c:2,
+w:"Penalty severity accounts for <b>the nature of the violation, the organization's size, and any previous violations</b> \u2014 so recurrence escalates exposure, particularly where it suggests remediation was superficial. There is no cap tied to a prior fine, recurrence is not neutral, and fixing an earlier problem confers no immunity for a later one.",bok:{c:"II.C.5",t:"Understand the enforcement framework and penalties for noncompliance."},syb:{c:"Ch 6",s:"Enforcement and Penalties \u2192 Escalation and Recurrence"}},
+
+{d:"II",t:"Penalties compared",s:"How do the EU AI Act's maximum penalties compare with the GDPR's?",
+o:["They are identical, since both cap at 4% of turnover","The AI Act's top tier is lower, reflecting its lighter-touch approach","The AI Act's top tier is higher, reaching 7% of worldwide turnover against the GDPR's 4%","The AI Act imposes criminal rather than administrative penalties"],c:2,
+w:"The AI Act's top tier for prohibited practices reaches <b>EUR 35 million or 7% of total worldwide annual turnover</b>, exceeding the GDPR's headline 4% ceiling \u2014 a deliberate signal about the seriousness of the red lines. The caps are not identical, the AI Act is not lighter-touch at the top end, and its penalties are administrative.",bok:{c:"II.C.5",t:"Understand the enforcement framework and penalties for noncompliance."},syb:{c:"Ch 6",s:"Enforcement and Penalties \u2192 Penalties Compared to GDPR"}},
+
+{d:"II",t:"OECD classification",s:"Beyond its five values-based principles, the OECD publishes a framework for classifying AI systems. What is its governance use?",
+o:["It provides a structured way to characterise a system \u2014 people, economic context, data and input, model, and task and output \u2014 supporting consistent risk assessment across organizations and jurisdictions","It certifies AI systems as trustworthy","It is legally binding on OECD member states","It replaces national risk classification schemes"],c:0,
+w:"The <b>OECD Framework for Classification of AI Systems</b> gives a common vocabulary for describing a system along consistent dimensions, so risk assessments become comparable across organizations and borders. The OECD certifies nothing, its instruments are non-binding, and the framework informs rather than displaces statutory schemes such as the EU AI Act's tiers.",bok:{c:"II.D.1",t:"Understand the Organisation for Economic Co-operation and Development (OECD) principles, framework, policies and recommended practices for trustworthy AI."},syb:{c:"Ch 7",s:"Other AI-related Standards \u2192 OECD Framework for Classification of AI Systems"}},
+
+{d:"II",t:"Voluntary vs binding",s:"An organization states that adopting the OECD AI Principles satisfies its EU AI Act obligations. What is the correct assessment?",
+o:["Correct, since the EU AI Act was modelled on the OECD Principles","Incorrect, because the OECD Principles conflict with the EU AI Act","Correct, provided the organization documents the adoption","Incorrect \u2014 the OECD Principles are non-binding and support good practice, but confer no legal compliance with a binding regulation"],c:3,
+w:"The OECD Principles <b>influenced</b> the EU AI Act but are voluntary and confer no compliance with it \u2014 a distinction the exam tests through exactly this confusion. Alignment is genuinely useful and the two do not conflict; the point is that only the Act's own obligations discharge the Act's requirements, and documenting a voluntary adoption changes nothing legally.",bok:{c:"II.D.1",t:"Understand the Organisation for Economic Co-operation and Development (OECD) principles, framework, policies and recommended practices for trustworthy AI."},syb:{c:"Ch 7",s:"OECD Principles \u2192 Relevance to AI Governance Professionals"}},
+
+{d:"II",t:"Non-EU provider",sc:{id:"E3",n:"Scenario C",txt:"<p><b>Marisol Bank</b> operates in the EU and the US. It buys a high-risk AI credit-decisioning system from a Canadian developer that has no EU establishment, and deploys it to decide applications from EU consumers. Marisol later substantially modifies the system's decision logic.</p>\n<p>A declined applicant asks why, and what would have to change for approval. Marisol's data science team can produce global feature importance for the model but nothing specific to that applicant.</p>"},s:"The Canadian developer has no EU establishment but places a high-risk system on the EU market. Which statement is correct?",
+o:["Neither party is covered, because the developer is outside the EU","The developer is the provider and must appoint an authorized representative established in the Union","Marisol becomes the provider automatically by importing the system","The Act applies only once the system is substantially modified"],c:1,
+w:"The Act is <b>extraterritorial</b>: a third-country developer placing a high-risk system on the EU market is the provider and must designate an <b>authorized representative in the Union</b>. Marisol does not become provider merely by acquiring it \u2014 although its later substantial modification of the decision logic does convert it into a provider for the modified system, which is a separate trigger.",bok:{c:"II.C.6",t:"Understand the differences in requirements based on organizational context (e.g., providers, deployers, importers and distributors)."},syb:{c:"Ch 6",s:"Organizational Context \u2192 Importers: Bridging the Legal Jurisdictions"}},
+
+{d:"III",t:"Individual explanation",sc:{id:"E3",n:"Scenario C",txt:"<p><b>Marisol Bank</b> operates in the EU and the US. It buys a high-risk AI credit-decisioning system from a Canadian developer that has no EU establishment, and deploys it to decide applications from EU consumers. Marisol later substantially modifies the system's decision logic.</p>\n<p>A declined applicant asks why, and what would have to change for approval. Marisol's data science team can produce global feature importance for the model but nothing specific to that applicant.</p>"},s:"The applicant asks why they were declined and what would need to change. Global feature importance will not answer that. What would?",
+o:["A counterfactual explanation identifying the minimal changes that would have altered this decision","The model's overall accuracy and AUC figures","The training data schema and dictionary","A published model card describing intended use"],c:0,
+w:"A <b>counterfactual</b> answers precisely what was asked \u2014 which minimal changes would have flipped this particular outcome \u2014 making it both individually explanatory and actionable. Global importance describes the model's general behaviour without accounting for one applicant; performance metrics, schema documentation and model cards all describe the system rather than the decision.",bok:{c:"III.B.3",t:"Plan and perform training and testing of the AI model and system (e.g., unit, integration, validation, performance, security, bias and interpretability)."},syb:{c:"Ch 9",s:"AI System Testing \u2192 Human-in-the-loop and Scenario Testing"}},
+
+{d:"II",t:"DPIA and conformity assessment",s:"DPIAs and AI conformity assessments serve different legal regimes. Which element is common to both?",
+o:["A targeted plan to mitigate the risks identified","A valid consent mechanism for the data subjects involved","A strategy for anonymising the underlying dataset","A published policy describing personal data use"],c:0,
+w:"Both instruments assess risk and require a <b>targeted mitigation plan</b> for what they find \u2014 that is the shared structure. Consent and anonymisation may be relevant depending on the processing but are not required elements of either; and while personal data is central to a DPIA, an AI conformity assessment may involve no personal data at all, which is why a personal-data policy is not common ground.",bok:{c:"II.C.2",t:"Understand the key requirements around risk management, data governance, technical documentation, conformity/impact assessments and record keeping."},syb:{c:"Ch 6",s:"Classification Requirements"}},
+
+{d:"III",t:"Provenance failure",s:"A model is challenged in litigation. The organization can show its full transformation pipeline from raw file to training set, but cannot establish where two source datasets originally came from or under what terms. Which is missing?",
+o:["Lineage","Access logging","Version control","Provenance"],c:3,
+w:"<b>Lineage</b> traces transformations \u2014 which the organization has. <b>Provenance</b> establishes origin and the terms under which data was obtained, which is precisely the gap and precisely what a licensing or lawful-basis challenge turns on. Version control tracks artifact changes; access logging records who touched what. The pair is commonly conflated, and this is the discriminator.",bok:{c:"III.B.2",t:"Establish and document data lineage and provenance."},syb:{c:"Ch 9",s:"Data Lineage and Provenance \u2192 Defining Data Lineage and Data Provenance"}},
+
+{d:"III",t:"Traceability tradeoffs",s:"What tradeoff does the study guide identify in building comprehensive data lineage and provenance tracking?",
+o:["It reduces model accuracy","It prevents the use of third-party data entirely","It carries real cost and complexity in instrumentation and storage, which must be weighed against audit, reproducibility and legal-defence benefits","It is prohibited where personal data is involved"],c:2,
+w:"Traceability is not free: instrumenting pipelines, capturing metadata and retaining it costs engineering time and storage, and the guide is explicit that this is a genuine tradeoff to be weighed rather than an unlimited good. The benefits \u2014 audit readiness, reproducibility, licensing defence \u2014 usually justify it for higher-risk systems. It does not affect accuracy, bar third-party data, or conflict with privacy law.",bok:{c:"III.B.2",t:"Establish and document data lineage and provenance."},syb:{c:"Ch 9",s:"Data Lineage and Provenance \u2192 Traceability Challenges and Tradeoffs"}},
+
+{d:"III",t:"Readiness misconception",s:"A team argues a model is ready for production because it exceeded every accuracy target. What does release readiness additionally require?",
+o:["A higher accuracy target","A larger validation dataset","Approval from the model's original architect","Confirmation that documentation, conformity requirements, oversight arrangements and rollback provisions are all in place"],c:3,
+w:"Readiness is an <b>organizational and compliance state</b>, not a performance score: documentation complete, conformity requirements satisfied, human oversight arranged, monitoring instrumented, rollback available, and ownership assigned. Raising the accuracy bar or enlarging the validation set improves the model without addressing any of that, and the architect's approval is not an independent check.",bok:{c:"III.C.1",t:"Assess readiness, and prepare for release into production (e.g., creating the model card and satisfying conformity requirements)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 Assessing AI System Readiness for Production"}},
+
+{d:"III",t:"Release conformity",ms:true,pick:3,s:"Which of the following are required when preparing a high-risk AI system for release into production?",
+o:["Technical documentation is complete and current","Required conformity assessment activities have been carried out","The model card describing intended use and limitations exists","The engineering team has approved its own work","Every possible failure mode has been eliminated"],c:[0, 1, 2],
+w:"Release preparation for a high-risk system centres on <b>complete technical documentation, satisfied conformity requirements, and a model card</b> stating intended use and limitations. Self-approval by the building team is not an independent gate, and eliminating every failure mode is impossible \u2014 which is why post-market monitoring and incident processes exist downstream.",bok:{c:"III.C.1",t:"Assess readiness, and prepare for release into production (e.g., creating the model card and satisfying conformity requirements)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 Assessing AI System Readiness for Production"}},
+
+{d:"III",t:"Bias",s:"Which is <b>least</b> likely to reduce bias arising from historically biased training labels?",
+o:["Reviewing label provenance and the decisions the labels encode","Increasing the volume of the same historical data","Testing outcomes across subgroups and documenting disparities","Reconsidering whether the target variable is an appropriate proxy"],c:1,
+w:"<b>More of the same biased data</b> teaches the pattern more faithfully rather than correcting it \u2014 volume is not a remedy for a biased target. Examining label provenance, subgroup outcome testing and questioning the proxy each attack the actual cause.",bok:{c:"III.B.4",t:"Identify and manage issues and risks during training and testing of the AI model and system."},syb:{c:"Ch 9",s:"Identifying and Managing Testing Risks"}},
+
+{d:"III",t:"Maintenance cadence",s:"Two deployed models are otherwise similar, but one operates in a fast-changing consumer market and the other in a stable industrial process. What follows for their maintenance schedules?",
+o:["Both should be retrained on the same fixed calendar for consistency","The industrial model needs more frequent retraining because stability implies hidden drift","Neither needs a schedule if continuous monitoring is in place","The consumer model warrants a more frequent maintenance and retraining schedule because its environment shifts faster"],c:3,
+w:"Maintenance cadence follows <b>how quickly the operating environment changes</b> and what staleness costs \u2014 so a volatile consumer setting warrants more frequent attention than a stable industrial process. A shared calendar ignores that. Monitoring detects problems but does not substitute for a scheduled maintenance commitment, and stability does not imply hidden drift.",bok:{c:"III.C.2",t:"Conduct continuous monitoring of the AI system, and establish a regular schedule for maintenance, updates and retraining."},syb:{c:"Ch 10",s:"Continuous Monitoring \u2192 Defining Maintenance Schedules"}},
+
+{d:"III",t:"Monitoring vs alerting",s:"A team has extensive dashboards but no one is paged when metrics move. What is the governance deficiency?",
+o:["Monitoring must be continuous rather than periodic","Dashboards should be replaced with weekly reports","Monitoring exists without defined thresholds and escalation, so degradation is observable but not acted upon","The dashboards should be publicly disclosed"],c:2,
+w:"Observation without a <b>trigger-to-action link</b> is not governance. Continuous monitoring must be paired with defined thresholds, an escalation path, and someone accountable for responding \u2014 otherwise problems are visible in hindsight only. Replacing dashboards with reports makes it slower, and public disclosure serves a different purpose entirely.",bok:{c:"III.C.2",t:"Conduct continuous monitoring of the AI system, and establish a regular schedule for maintenance, updates and retraining."},syb:{c:"Ch 10",s:"Continuous Monitoring \u2192 Foundations of AI System Monitoring"}},
+
+{d:"III",t:"Audit vs red teaming",s:"How do a performance audit and a red-teaming exercise differ in what they are designed to find?",
+o:["An audit verifies the system performs as documented and claimed; red teaming actively attempts to make it behave badly","They are two names for the same activity","An audit is internal and red teaming is always external","Red teaming is required by law while audits are voluntary"],c:0,
+w:"An <b>audit</b> is a verification exercise \u2014 does the system do what the documentation says, against evidence. <b>Red teaming</b> is adversarial \u2014 can we induce harmful, biased or manipulable behaviour. They answer different questions and neither substitutes for the other. Either can be internal or external, and neither is universally mandated.",bok:{c:"III.C.3",t:"Conduct periodic activities to assess the AI system's performance, reliability and safety (e.g., audits, red teaming, threat modeling and security testing)."},syb:{c:"Ch 11",s:"AI System Audits and Testing \u2192 Performance Audits / Red Teaming for Adversarial Robustness"}},
+
+{"d":"I","t":"Documentation risk","s":"An internal audit at Ravensworth finds a production model being used by a second team for a purpose governance never reviewed. Which missing artifact most directly allowed this?","o":["A record of the system's approved uses and the boundaries of that approval","The model's performance benchmark results","The vendor's security certification","The development team's project retrospectives"],"c":0,"w":"Approval attaches to a use case, and without a record of what was approved and where the boundary sits, nothing marks the second team's use as out of scope — this is the secondary-use risk governance exists to catch. Benchmarks describe performance, a security certification describes the vendor's controls, and retrospectives record process history; none of them defines what the system is authorized to do.","bok":{"c":"I.B.1","t":"Define roles and responsibilities for AI governance stakeholders."},"syb":{"c":"Ch 2","s":"Roles and Responsibilities for AI Governance Stakeholders"}},
+
+{d:"III",t:"AI attack surfaces",s:"Threat modeling for an AI system should extend beyond conventional application attack surfaces to include which additional targets?",
+o:["Only the network perimeter and API gateway","Only the source code repository","Only the physical data centre","The training data pipeline, the model itself, and the inference interface"],c:3,
+w:"AI adds attack surfaces conventional threat models omit: the <b>training data pipeline</b> (poisoning), the <b>model</b> (extraction, inversion), and the <b>inference interface</b> (prompt injection, evasion). Perimeter, facility and repository controls remain necessary but leave every AI-specific vector unexamined \u2014 which is the point of AI-specific threat modeling.",bok:{c:"III.C.3",t:"Conduct periodic activities to assess the AI system's performance, reliability and safety (e.g., audits, red teaming, threat modeling and security testing)."},syb:{c:"Ch 11",s:"AI System Audits and Testing \u2192 Threat Modeling for AI-specific Attack Surfaces"}},
+
+{d:"III",t:"Near misses",s:"An AI system produces a dangerous output that a human reviewer catches before it reaches anyone. Should it be documented?",
+o:["No, because the control worked as designed","No, because no harm occurred","Only if the reviewer requests it","Yes \u2014 near misses reveal how close the system came to harm and where controls are load-bearing"],c:3,
+w:"A near miss is <b>evidence about how thin your margin is</b>. That the control caught it is exactly why it matters: you learn which safeguards are doing real work and how frequently they are needed. Documenting only realised harm means you discover the pattern when a control finally fails. Requirements to manage and document incidents, issues and risks are not limited to those causing damage.",bok:{c:"III.C.4",t:"Manage and document incidents, issues and risks."},syb:{c:"Ch 11",s:"Incident Management and Disclosures \u2192 Documenting Incidents, Issues, and Risks"}},
+
+{d:"III",t:"Issue vs incident",s:"In AI incident management, what distinguishes an 'issue' from an 'incident'?",
+o:["Issues affect internal users; incidents affect external users","There is no meaningful distinction","Issues are technical; incidents are legal","An issue is a known problem or deviation being tracked; an incident is an event where the system caused or nearly caused harm requiring response"],c:3,
+w:"An <b>issue</b> is a tracked deviation or known problem being managed; an <b>incident</b> is an event demanding a response because harm occurred or nearly did. Keeping them distinct prevents two failures: treating every minor defect as a crisis, and quietly logging something serious as a routine issue. The split is not by audience, and both have technical and legal dimensions.",bok:{c:"III.C.4",t:"Manage and document incidents, issues and risks."},syb:{c:"Ch 11",s:"Incident Management and Disclosures \u2192 Categorizing and Escalating Incidents"}},
+
+{d:"III",t:"Root cause",s:"A model fails on a condition that never appeared in any test set. Which BoK-named incident cause does this best match?",
+o:["Model or data drift","Brittleness","Lack of quality data","Insufficient testing"],c:3,
+w:"The condition was never tested, so the direct cause is <b>insufficient testing</b> \u2014 the coverage gap. The near-miss here is brittleness, which describes the model's inability to generalise beyond training conditions; both may be present, but the question asks what allowed the failure to reach production, and that is the untested path. Drift develops post-deployment, and data quality is about the data itself rather than test coverage.",bok:{c:"III.C.5",t:"Collaborate with cross-functional stakeholders to understand why incidents arise from AI systems (e.g., brittleness, lack of robustness, lack of quality data, insufficient testing, and model or data drift)."},syb:{c:"Ch 11",s:"Incident Management \u2192 Collaborating with Stakeholders to Understand Root Causes"}},
+
+{d:"III",t:"Blameless analysis",s:"Why does the study guide warn against a culture of blame in AI incident analysis?",
+o:["Blame is prohibited under the EU AI Act","Individual accountability is incompatible with AI governance","Blame suppresses the reporting and candour that root cause analysis depends on, so systemic causes go undiscovered","Incidents in AI systems are never attributable to human decisions"],c:2,
+w:"If reporting an incident is dangerous to you, <b>people stop reporting</b> \u2014 and the systemic causes, which are usually where the real fix lies, never surface. Blameless analysis is about accurate diagnosis, not the absence of accountability: organizational accountability remains, and human decisions frequently do contribute. No statute addresses this; it is a governance-effectiveness point.",bok:{c:"III.C.5",t:"Collaborate with cross-functional stakeholders to understand why incidents arise from AI systems (e.g., brittleness, lack of robustness, lack of quality data, insufficient testing, and model or data drift)."},syb:{c:"Ch 11",s:"Incident Management \u2192 Avoiding a Culture of Blame"}},
+
+{d:"III",t:"Instructions for use",s:"What must a provider's instructions for use convey to a deployer of a high-risk AI system?",
+o:["The model's source code and training data","The commercial terms of the licence","The provider's internal development timeline","Intended purpose, performance characteristics, known limitations, and the human oversight measures the deployer must implement"],c:3,
+w:"Instructions for use are the provider's transfer of <b>operating knowledge</b>: what the system is for, how well it performs and under what conditions, where it fails, and what oversight the deployer must put in place. Without them a deployer cannot discharge its own obligations. Source code and training data are neither required nor appropriate; timelines and commercial terms serve other purposes.",bok:{c:"III.C.6",t:"Make public disclosures to meet transparency obligations (e.g., technical documentation, instructions for use to deployers and post-market monitoring plans)."},syb:{c:"Ch 11",s:"Incident Management \u2192 Transparency and Public Disclosures"}},
+
+{d:"III",t:"Disclosure boundaries",ms:true,pick:3,s:"Which of the following belong in the transparency disclosures a provider makes about a high-risk AI system?",
+o:["Intended purpose and the conditions under which the system performs reliably","Known limitations and residual risks relevant to safe use","The post-market monitoring approach","Security vulnerabilities not yet remediated","Individual training records of identifiable people"],c:[0, 1, 2],
+w:"Public and deployer-facing disclosure covers <b>intended purpose and reliable operating conditions, known limitations and residual risks, and the post-market monitoring approach</b>. Two categories must be withheld: unremediated security vulnerabilities, whose publication would assist attackers, and identifiable training records, whose disclosure would breach privacy. Transparency has boundaries, and knowing them is the governance skill.",bok:{c:"III.C.6",t:"Make public disclosures to meet transparency obligations (e.g., technical documentation, instructions for use to deployers and post-market monitoring plans)."},syb:{c:"Ch 8",s:"Documenting the Lifecycle \u2192 What Not to Publish"}},
+
+{"d":"I","t":"Governance integration sequence","ord":true,"s":"Place these steps for standing up an AI governance programme in the order they should occur.","o":["Record who will implement and maintain the structure","Establish whether a governance structure already exists to build on","Engage those stakeholders early to build partnership rather than resistance","Secure an executive sponsor to champion the programme","Map the stakeholders across the business who will be involved"],"c":[1,3,0,4,2],"w":"Establish what already exists — best practice is to extend what works — then secure an executive sponsor for authority, record who implements and maintains the structure, map the stakeholders across the business, and engage them early so they become partners rather than opponents. Engaging before ownership is defined spends goodwill you cannot yet act on.","bok":{"c":"I.B.1","t":"Define roles and responsibilities for AI governance stakeholders."},"syb":{"c":"Ch 2","s":"Roles and Responsibilities for AI Governance Stakeholders"}},
+
+{d:"IV",t:"Deployment options",s:"A system must run offline at remote sites with minimal latency and keep sensitive data local. Which option is <b>least</b> suitable?",
+o:["Edge deployment on local devices","On-premise deployment at each site","Public cloud with regional data residency","A hybrid design performing inference locally"],c:2,
+w:"<b>Public cloud, even with regional residency</b>, fails the offline requirement: inference depends on connectivity the scenario says will not always exist, and residency addresses where data rests rather than whether processing is local. Edge, on-premise and a hybrid that keeps inference local each satisfy all three constraints.",bok:{c:"IV.A.3",t:"Understand the differences in AI deployment options (e.g., cloud vs. on-premise vs. edge, and using the AI model as is or with fine-tuning, retrieval augmented generation, agentic architectures, or other techniques to improve performance and fit)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"IV",t:"Objectives vs requirements",s:"In evaluating an AI use case before deployment, what distinguishes the business objective from the performance requirement?",
+o:["They are the same thing expressed differently","The objective is technical; the requirement is commercial","The objective states the outcome the organization wants; the performance requirement states the measurable standard the system must meet to deliver it","Only the performance requirement needs documenting"],c:2,
+w:"The <b>objective</b> is the outcome sought \u2014 reduce claim handling time, improve triage accuracy. The <b>performance requirement</b> is the measurable bar that makes the objective achievable, and it is where thresholds, subgroup expectations and failure tolerances get fixed. Conflating them produces systems that meet a metric while missing the goal, and both need documenting.",bok:{c:"IV.A.1",t:"Understand the context of the AI use case (e.g., business objectives, performance requirements, data availability, ethical considerations and workforce readiness)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 Operational Readiness and Risk Evaluation"}},
+
+{d:"IV",t:"Data availability",s:"Assessing data availability before committing to an AI deployment, which finding should most concern governance?",
+o:["The data is held in more than one system","The organization has less data than a published benchmark used","Sufficient data exists but the organization cannot establish lawful rights to use it for this purpose","The data requires transformation before use"],c:2,
+w:"Volume is rarely the binding constraint; <b>lawful rights</b> are. Data that exists but cannot lawfully be used for this purpose stops the project regardless of quality or quantity, and discovering that after building is expensive. Multiple source systems and transformation needs are ordinary engineering, and benchmark comparisons say little about fitness for your task.",bok:{c:"IV.A.1",t:"Understand the context of the AI use case (e.g., business objectives, performance requirements, data availability, ethical considerations and workforce readiness)."},syb:{c:"Ch 8",s:"Business Context and Use Cases \u2192 Assessing Data Availability and Suitability"}},
+
+{d:"I",t:"Misalignment",sc:{id:"E4",n:"Scenario D",txt:"<p><b>Grendel Media</b> runs a recommendation model optimised for watch time. It works exactly as specified, and over six months progressively surfaces more polarising content because that maximises the metric. Aggregate engagement and accuracy metrics are all healthy.</p>\n<p>Grendel also runs an AI tool that dynamically adjusts the wording and button prominence of its consent dialogue until users are most likely to accept data sharing, and times upgrade prompts to moments when a user's activity suggests they are isolated.</p>"},s:"Grendel's recommender works exactly as specified yet progressively surfaces polarising content. Which characterisation is <b>incorrect</b>?",
+o:["It illustrates misalignment between the optimised metric and the intended outcome","It is an incident, notwithstanding that nothing malfunctioned","It is not an incident, because the system performed to specification","Aggregate metrics can remain healthy while the harm accumulates"],c:2,
+w:"The false statement is that specification-conforming behaviour cannot be an incident. <b>Not all incidents are failures</b> \u2014 a system doing exactly what it was told can cause harm because the objective was misaligned with what was actually wanted, which is why incident management weighs intent against outcome rather than only asking whether something broke. The other three statements are all accurate.",bok:{c:"I.A.2",t:"Identify the types of risks and harms posed by AI to individuals, groups, organizations and society (e.g., misalignment with objectives, ethics and bias risk, and complexity and scalability)."},syb:{c:"Ch 1",s:"Risks and Harms Posed by AI"}},
+
+{d:"II",t:"Manipulation",sc:{id:"E4",n:"Scenario D",txt:"<p><b>Grendel Media</b> runs a recommendation model optimised for watch time. It works exactly as specified, and over six months progressively surfaces more polarising content because that maximises the metric. Aggregate engagement and accuracy metrics are all healthy.</p>\n<p>Grendel also runs an AI tool that dynamically adjusts the wording and button prominence of its consent dialogue until users are most likely to accept data sharing, and times upgrade prompts to moments when a user's activity suggests they are isolated.</p>"},s:"Grendel optimises its consent dialogue for acceptance and times upgrade prompts to moments of apparent isolation. Which analysis is correct?",
+o:["Both are permissible personalization if pricing is accurately disclosed","The consent dialogue is a dark pattern undermining valid consent; timing prompts to detected vulnerability is an unfair practice even if every statement is true","Only the consent dialogue raises an issue; prompt timing is a marketing decision","Neither raises an issue, since users retain the ability to decline"],c:1,
+w:"Optimising an interface to steer a choice is a <b>dark pattern</b>, and consent obtained that way is not freely given, so it fails as a lawful basis. Separately, deliberately timing an offer to a detected emotional vulnerability is <b>unfair</b> \u2014 a distinct theory from deception, engaged even where every statement made is accurate. Accurate pricing and a nominal ability to decline cure neither.",bok:{c:"II.B.3",t:"Understand how consumer protection laws apply to AI (e.g., prohibiting unfair and deceptive acts or practices)."},syb:{c:"Ch 5",s:"How Consumer Protection Laws Apply to AI \u2192 AI-powered Deception and Manipulation"}},
+
+{d:"IV",t:"Deploy decision",ms:true,pick:3,s:"Which factors belong in the evaluation of whether to deploy an AI system?",
+o:["Whether the workforce is prepared to operate and oversee the system","Whether ethical considerations specific to the use case have been evaluated","Whether performance requirements can realistically be met with available data","Whether the vendor offers the lowest price in the market","Whether competitors have deployed something similar"],c:[0, 1, 2],
+w:"The BoK frames the deploy decision around <b>business objectives, performance requirements, data availability, ethical considerations and workforce readiness</b> \u2014 an assessment of whether this organization can operate this system responsibly for this purpose. Vendor pricing is a procurement input, and competitor activity is market intelligence; neither speaks to whether deployment is appropriate or feasible here.",bok:{c:"IV.A.1",t:"Understand the context of the AI use case (e.g., business objectives, performance requirements, data availability, ethical considerations and workforce readiness)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 Operational Readiness and Risk Evaluation"}},
+
+{d:"IV",t:"Proprietary vs open source",s:"An organization is choosing between a proprietary hosted model and an openly available one it would run itself. Which consideration most favours the open option from a governance standpoint?",
+o:["Open models are always more accurate","Open models are exempt from AI regulation","Open models carry no licensing obligations","Greater visibility into and control over the model, its hosting, and its data flows"],c:3,
+w:"The governance advantage of running an open model is <b>visibility and control</b> \u2014 you can inspect it, host it where you choose, and keep data flows internal, which matters most for sensitive or regulated workloads. The tradeoff is that you also absorb the full operating burden. Accuracy varies case by case, open licences frequently carry real restrictions, and openness confers no regulatory exemption.",bok:{c:"IV.A.2",t:"Understand the differences in AI model types (e.g., classic vs. generative, proprietary vs. open source, small vs. large, and language vs. multimodal capabilities)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"IV",t:"Model scale",s:"What is the strongest governance argument for choosing a smaller model when it meets the performance requirement?",
+o:["Lower cost, lower latency, a smaller attack surface and easier monitoring, with no capability the use case requires being sacrificed","Smaller models are exempt from impact assessments","Smaller models cannot be attacked","Regulators require the smallest viable model"],c:0,
+w:"If a smaller model meets the requirement, the larger one buys capability you do not need while adding <b>cost, latency, attack surface and monitoring burden</b> \u2014 the concrete governance case against over-specification. Smaller models are neither exempt from assessment nor immune to attack, and no regulator prescribes model size.",bok:{c:"IV.A.2",t:"Understand the differences in AI model types (e.g., classic vs. generative, proprietary vs. open source, small vs. large, and language vs. multimodal capabilities)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"IV",t:"Classic vs generative",s:"Which characteristic most strongly indicates a classic predictive model rather than a generative one is the right choice?",
+o:["The task requires drafting free-text responses to varied questions","The output must be a stable, auditable prediction from structured inputs, with reproducible behaviour","The organization wants to summarise long documents","Users will interact conversationally"],c:1,
+w:"<b>Stable, auditable, reproducible prediction from structured data</b> is exactly what classic models do well, and exactly where generative variability becomes a liability. Free-text drafting, summarisation and conversational interaction all point the other way. The exam tests whether you match the model class to the task rather than defaulting to whatever is newest.",bok:{c:"IV.A.2",t:"Understand the differences in AI model types (e.g., classic vs. generative, proprietary vs. open source, small vs. large, and language vs. multimodal capabilities)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"IV",t:"Cloud vs on-premise",s:"A regulated organization must keep a dataset within national borders and retain full control over the processing environment, but wants to avoid the burden of scaling infrastructure. What is the honest governance assessment?",
+o:["Public cloud with a regional deployment fully satisfies both","On-premise deployment satisfies control and residency but the organization must accept the infrastructure burden \u2014 the requirements are in genuine tension","Edge deployment resolves both requirements","There is no way to meet residency requirements with any deployment model"],c:1,
+w:"Some requirements genuinely conflict, and governance means naming the tradeoff rather than pretending it away: <b>on-premise</b> gives control and residency at the cost of the operational burden the organization wanted to avoid. Regional cloud may satisfy residency but not full environmental control; edge addresses latency and local processing rather than this pairing; and residency is certainly achievable.",bok:{c:"IV.A.3",t:"Understand the differences in AI deployment options (e.g., cloud vs. on-premise vs. edge, and using the AI model as is or with fine-tuning, retrieval augmented generation, agentic architectures, or other techniques to improve performance and fit)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Deployment Considerations"}},
+
+{d:"I",t:"Responsible AI principles",ms:true,s:"Which of the following are commonly listed principles of responsible AI?",
+o:["Fairness","Human-centricity","Cost efficiency","Transparency and explainability","Market exclusivity"],c:[0, 1, 3],
+w:"The commonly listed principles include <b>fairness</b>, <b>human-centricity</b> and <b>transparency and explainability</b>, alongside safety and reliability, privacy and security, and accountability. <b>Cost efficiency</b> and <b>market exclusivity</b> are commercial objectives \u2014 legitimate business goals, but not responsible-AI principles, and treating them as such is how governance gets quietly subordinated to the business case.",bok:{c:"I.A.4",t:"Identify and apply the common principles of responsible AI (e.g., fairness, safety and reliability, privacy and security, transparency and explainability, accountability and human-centricity)."},syb:{c:"Ch 1",s:"Principles of Responsible AI"}},
+
+{d:"IV",t:"Fine-tune vs RAG",s:"An organization needs a model to adopt a specialised professional register and terminology consistently, across content that rarely changes. Which adaptation approach fits best?",
+o:["Retrieval augmented generation","Fine-tuning on domain examples","Using the base model unchanged","An agentic architecture"],c:1,
+w:"<b>Fine-tuning</b> teaches style, tone and terminology by adjusting the model on domain examples \u2014 appropriate here because the target is <i>how it expresses things</i> and the content is stable. RAG is the answer when facts change frequently and citation matters; the base model alone will not hold the register consistently; and agentic architectures address multi-step goal-directed work.",bok:{c:"IV.A.3",t:"Understand the differences in AI deployment options (e.g., cloud vs. on-premise vs. edge, and using the AI model as is or with fine-tuning, retrieval augmented generation, agentic architectures, or other techniques to improve performance and fit)."},syb:{c:"Ch 10",s:"Pre-release Readiness \u2192 AI Model Optimization for Production Fit"}},
+
+{d:"IV",t:"Reviewing an assessment",s:"A vendor provides a thorough impact assessment for its AI system. What is the reviewing organization's task?",
+o:["Confirm the vendor's assessment is signed and file it","Evaluate whether the assessment's assumptions, affected populations and risk conclusions hold for this organization's actual use case and context","Repeat the vendor's assessment verbatim under its own letterhead","Accept it, since the vendor knows the system best"],c:1,
+w:"The BoK says <b>perform or review</b> \u2014 and reviewing means testing whether the vendor's assumptions survive contact with your context: your population, your decision, your consequences. A vendor cannot assess a deployment it has never seen. Filing it unexamined and rebranding it both skip the actual work, and vendor system knowledge does not extend to your use.",bok:{c:"IV.B.1",t:"Perform or review an impact assessment on the selected AI system."},syb:{c:"Ch 8",s:"Impact Assessments \u2192 Preparing for an Impact Assessment"}},
+
+{d:"I",t:"Governance roles",s:"Which statement about AI governance roles is <b>not</b> accurate?",
+o:["One organization may occupy more than one role at once","A deployer uses the system under its own authority","Concentrating all responsibilities in a single owner strengthens accountability","End users retain responsibilities such as following acceptable-use rules"],c:2,
+w:"<b>Concentrating everything in one owner</b> creates a bottleneck and a single point of failure rather than strengthening accountability \u2014 RACI requires exactly one <i>accountable</i> party per task, not one party for every task. Dual roles are common, deployers do act under their own authority, and end users retain real obligations.",bok:{c:"I.B.5",t:"Identify differences among AI developers, providers, deployers and users from a governance perspective (e.g., with respect to responsibilities, opportunities and needs)."},syb:{c:"Ch 2",s:"Developers, Deployers, and Users in AI Governance"}},
+
+{d:"IV",t:"Assessment scope",s:"When assessing a selected third-party AI system, which scope question most often gets missed?",
+o:["The system's inference latency under load","Who is affected by the decisions in this specific deployment, including people who never interact with the system","The vendor's corporate ownership structure","The programming language the system is built in"],c:1,
+w:"Impact assessment turns on <b>who bears the consequences</b> \u2014 and the commonly missed group is people affected without ever using the system: applicants screened out, patients triaged, neighbourhoods scored. Latency is a performance matter, and ownership structure and implementation language rarely bear on impact.",bok:{c:"IV.B.1",t:"Perform or review an impact assessment on the selected AI system."},syb:{c:"Ch 8",s:"Impact Assessments \u2192 Understanding AI Impact Assessments"}},
+
+{d:"IV",t:"Assessment ownership",s:"Who should be accountable for the impact assessment of a third-party AI system the organization intends to deploy?",
+o:["The vendor, since it built the system","The deploying organization, because it selects the use case, the population affected and the deployment context","The cloud provider hosting the system","No one, if the vendor supplies its own assessment"],c:1,
+w:"Accountability follows the deployment decision: the <b>deploying organization</b> chooses the use case, the affected population and the context, so it owns the assessment of impact in that context. Vendor and hosting-provider assessments are useful inputs, but neither can assess a deployment they do not control \u2014 and neither absorbs your accountability for it.",bok:{c:"IV.B.1",t:"Perform or review an impact assessment on the selected AI system."},syb:{c:"Ch 8",s:"Impact Assessments \u2192 Conducting an Impact Assessment"}},
+
+{d:"IV",t:"Termination rights",s:"Which contract term most directly protects an organization that later discovers its AI vendor's practices breach its own compliance obligations?",
+o:["An automatic annual renewal clause","A termination right triggered by the vendor's compliance failure, with transition assistance","A volume discount tier","A mutual non-disparagement clause"],c:1,
+w:"A <b>compliance-triggered termination right with transition assistance</b> is what converts a discovered breach into an exit you can actually execute, rather than a problem you are contractually locked into. Automatic renewal deepens the lock-in, volume discounts are commercial, and non-disparagement restricts speech without addressing the underlying risk.",bok:{c:"IV.B.2",t:"Identify and evaluate key terms and risks in the vendor or licensing agreement."},syb:{c:"Ch 11",s:"AI Risk Management \u2192 Common Contract Clauses to Scrutinize"}},
+
+{d:"IV",t:"Output ownership",s:"Why does ownership of AI-generated outputs need explicit treatment in a vendor agreement?",
+o:["Outputs are automatically owned by the customer under copyright law","Ownership and permitted use of generated content is legally unsettled, so silence in the contract creates disputes over commercial use, derivative works and liability","Outputs cannot be owned by anyone","Ownership is determined solely by which party paid for the compute"],c:1,
+w:"The legal position on generated content is <b>unsettled</b>, so a contract that says nothing leaves the parties to argue later about commercial exploitation, derivative works and who answers if an output infringes. Explicit allocation resolves it up front. No default rule vests ownership in the customer, outputs are not incapable of ownership, and payment for compute does not determine it.",bok:{c:"IV.B.2",t:"Identify and evaluate key terms and risks in the vendor or licensing agreement."},syb:{c:"Ch 11",s:"AI Risk Management \u2192 Common Contract Clauses to Scrutinize"}},
+
+{d:"IV",t:"Proprietary liability",s:"The BoK notes that deploying an organization's own proprietary model carries increased obligations and higher potential liability. Why?",
+o:["Proprietary models are inherently less accurate","There is no vendor between the organization and the harm \u2014 it holds the provider role and every associated obligation and exposure","Proprietary models are subject to a separate regulatory regime","Insurance is unavailable for proprietary models"],c:1,
+w:"Building your own removes the intermediary: you occupy the <b>provider</b> role, so data rights, testing depth, documentation, conformity, explainability and post-market duties all land on you, and so does the liability when something goes wrong. Proprietary models are not inherently less accurate, face no separate regime, and are insurable.",bok:{c:"IV.B.3",t:"Identify and understand the risks and opportunities that are unique to a company deploying its own proprietary AI model (e.g., increased obligations and higher potential liability)."},syb:{c:"Ch 8",s:"Proprietary Model Considerations \u2192 Ownership and Accountability"}},
+
+{d:"IV",t:"Resourcing",s:"Beyond legal exposure, what organizational risk does the study guide associate with maintaining a proprietary AI model?",
+o:["The model will become obsolete within a fixed period","Sustained specialist resourcing is required, and dependence on a small number of individuals creates a single point of failure","Proprietary models cannot be monitored","The organization must publish the model openly"],c:1,
+w:"Proprietary models need <b>sustained specialist capability</b> \u2014 and the guide flags the single-point-of-failure risk when that capability rests with one or two people who understand the system. Departure leaves an unmaintainable model in production. Obsolescence is not on a fixed schedule, proprietary models are monitorable, and nothing compels open publication.",bok:{c:"IV.B.3",t:"Identify and understand the risks and opportunities that are unique to a company deploying its own proprietary AI model (e.g., increased obligations and higher potential liability)."},syb:{c:"Ch 8",s:"Proprietary Model Considerations \u2192 Resourcing and Organizational Readiness"}},
+
+{d:"IV",t:"Proprietary obligations",ms:true,pick:3,s:"Which of the following follow from deploying an organization's own proprietary AI model rather than a third-party one?",
+o:["The organization must establish lawful rights to all training data itself","Explainability and testing depth become its own responsibility rather than a vendor's","It assumes provider-level regulatory obligations for the system","It is exempt from impact assessment because it controls the model","Post-market monitoring becomes optional for internally built systems"],c:[0, 1, 2],
+w:"Building in-house means <b>owning the data rights, the explainability and testing burden, and the provider-level regulatory obligations</b> in full. The two false options invert the logic: control increases responsibility rather than reducing it, so impact assessment remains required and post-market monitoring remains mandatory \u2014 arguably more so, since no vendor is watching alongside you.",bok:{c:"IV.B.3",t:"Identify and understand the risks and opportunities that are unique to a company deploying its own proprietary AI model (e.g., increased obligations and higher potential liability)."},syb:{c:"Ch 8",s:"Proprietary Model Considerations \u2192 The EU AI Act and Proprietary Models"}}
+];
+
+const DOMAIN_NAMES={I:"Foundations of AI governance",II:"Laws, standards & frameworks",III:"Governing AI development",IV:"Governing AI deployment & use"};
+const DOMAIN_WEIGHT={I:"16–20 items",II:"19–23 items",III:"21–25 items",IV:"21–25 items"};
+const TOTAL_SECONDS=Math.round(Q.length*1.8)*60;
+
+let revealed=[];
+let answers=new Array(Q.length).fill(null);
+let flags=new Array(Q.length).fill(false);
+let cur=0, timed=true, remaining=TOTAL_SECONDS, ticker=null, reviewFilter="all";
+const $=id=>document.getElementById(id);
+
+/* ---------- question-type helpers ---------- */
+const isOrd = q=>!!q.ord;                        // ordering: c is an ordered array
+const isMS  = q=>!!q.ms;                         // multi-select
+const isAny = q=>!!q.ms && !q.pick;              // multi-select, count NOT given
+const needsCheck = q=>isOrd(q)||isAny(q);        // no auto-reveal trigger
+
+function scenarioGroup(i){
+  const q=Q[i]; if(!q.sc) return null;
+  const idx=[]; Q.forEach((x,j)=>{ if(x.sc&&x.sc.id===q.sc.id) idx.push(j); });
+  return {ids:idx, pos:idx.indexOf(i)+1, total:idx.length};
+}
+
+function beginExam(t){
+  timed=t; $("startScreen").hidden=true; $("examScreen").hidden=false;
+  if(timed) startTimer(); else { $("timer").textContent="untimed"; $("timer").style.fontSize="15px"; $("modehint").hidden=false; }
+  render();
+}
+$("startBtn").addEventListener("click",()=>beginExam(true));
+$("practiceBtn").addEventListener("click",()=>beginExam(false));
+
+function startTimer(){ updateClock();
+  ticker=setInterval(()=>{ remaining--; updateClock(); if(remaining<=0){clearInterval(ticker); finish(true);} },1000); }
+function updateClock(){
+  const m=Math.floor(remaining/60), s=remaining%60, el=$("timer");
+  el.textContent=m+":"+String(s).padStart(2,"0");
+  el.classList.toggle("warn", remaining<=12*60 && remaining>4*60);
+  el.classList.toggle("crit", remaining<=4*60);
+}
+
+function render(){
+  const q=Q[cur];
+  const shown=!!revealed[cur];
+  $("qnum").textContent="Q"+(cur+1);
+  $("qdom").textContent="Domain "+q.d+" · "+q.t;
+
+  /* badges */
+  const badge=$("msbadge");
+  if(isOrd(q)){ badge.hidden=false; badge.textContent="ORDERING"; }
+  else if(isAny(q)){ badge.hidden=false; badge.textContent="SELECT ALL THAT APPLY"; }
+  else if(isMS(q)){ badge.hidden=false; badge.textContent="MULTI-SELECT"; }
+  else badge.hidden=true;
+
+  /* scenario block */
+  const scEl=$("scenario");
+  const g=scenarioGroup(cur);
+  if(g){
+    scEl.hidden=false;
+    scEl.innerHTML='<div class="sc-head"><span class="sc-tag">'+q.sc.n+'</span>'+
+      '<span class="sc-pos">question '+g.pos+' of '+g.total+'</span></div>'+
+      '<div class="sc-body">'+q.sc.txt+'</div>';
+  } else scEl.hidden=true;
+
+  $("stem").innerHTML=q.s;
+
+  /* instruction line */
+  const note=$("msnote");
+  if(isOrd(q)){
+    const a=Array.isArray(answers[cur])?answers[cur]:[];
+    note.hidden=false;
+    note.textContent="Click the options in the correct order ("+a.length+" of "+q.o.length+" placed). One order is correct; scored as one point.";
+  } else if(isAny(q)){
+    const a=Array.isArray(answers[cur])?answers[cur]:[];
+    note.hidden=false;
+    note.textContent="Select all that apply — the number of correct options is not given. No partial credit. ("+a.length+" selected)";
+  } else if(isMS(q)){
+    const a=Array.isArray(answers[cur])?answers[cur]:[];
+    note.hidden=false;
+    note.textContent="Select "+q.pick+" of the "+q.o.length+" options. No partial credit. ("+a.length+" selected)";
+  } else note.hidden=true;
+
+  $("progress").textContent="Question "+(cur+1)+" of "+Q.length;
+  $("fill").style.width=(100*Q.filter((_,i)=>complete(i)).length/Q.length)+"%";
+
+  /* options */
+  const box=$("opts"); box.innerHTML="";
+  const keys = (isMS(q)||isOrd(q)) ? q.c : [q.c];
+  q.o.forEach((text,i)=>{
+    const sel = (isMS(q)||isOrd(q))
+      ? (Array.isArray(answers[cur]) && answers[cur].includes(i))
+      : answers[cur]===i;
+    const b=document.createElement("button");
+    let cls="opt"+(sel?" sel":"");
+    if(shown){
+      if(isOrd(q)){
+        const mine=Array.isArray(answers[cur])?answers[cur]:[];
+        cls = "opt"+(mine.indexOf(i)===q.c.indexOf(i) ? " correct" : " wrong");
+      } else {
+        cls="opt"+(keys.includes(i)?((sel||!isMS(q))?" correct":" missed"):(sel?" wrong":""));
+      }
+      b.disabled=true;
+    }
+    b.className=cls; b.type="button";
+    let lead=String.fromCharCode(65+i);
+    if(isOrd(q)){
+      const mine=Array.isArray(answers[cur])?answers[cur]:[];
+      const pos=mine.indexOf(i);
+      lead = (pos>=0? (pos+1)+"." : "&middot;")+" "+lead;
+    }
+    let tag="";
+    if(shown){
+      if(isOrd(q)) tag=(p=>p+(["\u02e2\u1d57","\u207f\u1d48","\u02b3\u1d48"][p-1]||"\u1d57\u02b0"))(q.c.indexOf(i)+1);
+      else if(keys.includes(i)) tag=(sel||!isMS(q))?"correct":"should have picked";
+      else if(sel) tag="your pick";
+    }
+    b.innerHTML='<span class="key">'+lead+'</span><span>'+text+'</span>'+(tag?'<span class="tag">'+tag+'</span>':'');
+    b.addEventListener("click",()=>{
+      if(revealed[cur]) return;
+      if(isOrd(q)){
+        let a=Array.isArray(answers[cur])?answers[cur].slice():[];
+        if(a.includes(i)) a=a.filter(x=>x!==i); else if(a.length<q.o.length) a.push(i);
+        answers[cur]=a;
+      } else if(isMS(q)){
+        let a=Array.isArray(answers[cur])?answers[cur].slice():[];
+        if(a.includes(i)) a=a.filter(x=>x!==i);
+        else if(isAny(q) || a.length<q.pick) a.push(i);
+        answers[cur]=a;
+        if(!timed && !isAny(q) && a.length===q.pick) revealed[cur]=true;
+      } else { answers[cur]=i; if(!timed) revealed[cur]=true; }
+      render();
+    });
+    box.appendChild(b);
+  });
+
+  /* check button for types with no auto-reveal */
+  const chk=$("checkBtn");
+  chk.hidden = !(!timed && needsCheck(q) && !shown && complete(cur));
+
+  /* feedback */
+  const fbEl=$("feedback");
+  if(shown){
+    const ok=isCorrect(cur);
+    fbEl.hidden=false;
+    fbEl.className="fb "+(ok?"right":"wrong");
+    let lbl;
+    if(isOrd(q)) lbl=(ok?'Correct':'Not quite')+' \u00b7 correct order: '+q.c.map(x=>String.fromCharCode(65+x)).join(' \u2192 ');
+    else if(isMS(q)) lbl=(ok?'Correct':'Not quite')+' \u00b7 all-or-nothing scoring';
+    else lbl=(ok?'Correct':'Not quite')+' \u00b7 '+String.fromCharCode(65+q.c)+' is the best answer';
+    fbEl.innerHTML='<span class="lbl">'+lbl+'</span>'+q.w+
+      '<div class="bokcite"><span class="code">BoK v2.1 \u00b7 '+q.bok.c+'</span><i>'+q.bok.t+'</i></div>'+
+      '<div class="sybcite"><span class="code">Sybex guide \u00b7 '+q.syb.c+'</span><i>'+q.syb.s+'</i></div>';
+  } else fbEl.hidden=true;
+
+  $("flagBtn").classList.toggle("on",flags[cur]);
+  $("flagBtn").textContent=flags[cur]?"⚑ Flagged":"⚑ Flag";
+  $("prevBtn").disabled=cur===0;
+  $("nextBtn").disabled=cur===Q.length-1;
+  drawGrid();
+}
+$("prevBtn").addEventListener("click",()=>{ if(cur>0){cur--;render();} });
+$("nextBtn").addEventListener("click",()=>{ if(cur<Q.length-1){cur++;render();} });
+$("flagBtn").addEventListener("click",()=>{ flags[cur]=!flags[cur]; render(); });
+$("clearBtn").addEventListener("click",()=>{
+  answers[cur]=(isMS(Q[cur])||isOrd(Q[cur]))?[]:null; revealed[cur]=false; render(); });
+$("checkBtn").addEventListener("click",()=>{ revealed[cur]=true; render(); });
+
+function complete(i){
+  const q=Q[i], a=answers[i];
+  if(isOrd(q)) return Array.isArray(a) && a.length===q.o.length;
+  if(isAny(q)) return Array.isArray(a) && a.length>0;
+  if(isMS(q))  return Array.isArray(a) && a.length===q.pick;
+  return a!==null;
+}
+function drawGrid(){
+  const g=$("grid"); g.innerHTML="";
+  Q.forEach((q,i)=>{
+    const c=document.createElement("button");
+    let cls="cell"+(complete(i)?" answered":"")+(flags[i]?" flagged":"")+(i===cur?" current":"");
+    if(q.sc) cls+=" scen";
+    c.className=cls; c.textContent=i+1;
+    if(q.sc) c.title=q.sc.n;
+    c.addEventListener("click",()=>{ cur=i; render(); window.scrollTo({top:0,behavior:"smooth"}); });
+    g.appendChild(c);
+  });
+  const inc=Q.filter((_,i)=>!complete(i)).length;
+  $("navSub").textContent=inc+" incomplete · "+flags.filter(Boolean).length+" flagged · underlined = part of a scenario";
+}
+
+$("submitBtn").addEventListener("click",()=>{
+  const inc=Q.filter((_,i)=>!complete(i)).length;
+  const msg=inc>0?"You have "+inc+" incomplete question"+(inc>1?"s":"")+". Multi-select and ordering items score zero unless fully and correctly completed. Submit anyway?":"Submit your exam?";
+  if(confirm(msg)) finish(false);
+});
+function finish(timeUp){
+  if(ticker) clearInterval(ticker);
+  $("examScreen").hidden=true; $("resultScreen").hidden=false;
+  showResults(timeUp); window.scrollTo({top:0});
+}
+function isCorrect(i){
+  const q=Q[i], a=answers[i];
+  if(isOrd(q)){
+    if(!Array.isArray(a)||a.length!==q.c.length) return false;
+    return a.every((v,k)=>v===q.c[k]);
+  }
+  if(isMS(q)){
+    if(!Array.isArray(a)) return false;
+    if(!isAny(q) && a.length!==q.c.length) return false;
+    const s=a.slice().sort((x,y)=>x-y), t=q.c.slice().sort((x,y)=>x-y);
+    return s.length===t.length && s.every((v,k)=>v===t[k]);
+  }
+  return a===q.c;
+}
+function showResults(timeUp){
+  let correct=0; const byDom={};
+  Q.forEach((q,i)=>{
+    if(!byDom[q.d]) byDom[q.d]={c:0,t:0};
+    byDom[q.d].t++;
+    if(isCorrect(i)){ correct++; byDom[q.d].c++; }
+  });
+  const pct=Math.round(100*correct/Q.length), pass=pct>=70;
+  $("rawBig").textContent=pct+"%";
+  $("rawBig").className="big "+(pass?"pass":"fail");
+  $("verdict").textContent=(pass?"On track":"Not yet ready")+" · "+correct+" of "+Q.length+" correct";
+  $("verdict").className="verdict "+(pass?"pass":"fail");
+  $("caveat").innerHTML=(timeUp?"<b>Time expired.</b> ":"")+
+    "Multi-select and ordering items are all-or-nothing, as IAPP states. A raw percentage — the real exam reports a scaled 100–500 score with 300 to pass.";
+  const order=Object.keys(byDom).sort((a,b)=>(byDom[a].c/byDom[a].t)-(byDom[b].c/byDom[b].t));
+  let rows='<tr><th>Domain</th><th>BoK blueprint</th><th>Score</th><th></th></tr>';
+  order.forEach(d=>{
+    const p=Math.round(100*byDom[d].c/byDom[d].t);
+    const cls=p<60?"low":(p<80?"mid":"");
+    rows+='<tr><td><b>'+d+'</b> · '+DOMAIN_NAMES[d]+'</td><td class="n">'+DOMAIN_WEIGHT[d]+
+      '</td><td class="n">'+byDom[d].c+'/'+byDom[d].t+' ('+p+'%)</td>'+
+      '<td><span class="minibar"><i class="'+cls+'" style="width:'+p+'%"></i></span></td></tr>';
+  });
+  $("domTable").innerHTML=rows;
+  drawReviewGrid(); renderReview();
+}
+function drawReviewGrid(){
+  const g=$("reviewGrid"); g.innerHTML="";
+  Q.forEach((q,i)=>{
+    const c=document.createElement("button");
+    c.className="cell "+(isCorrect(i)?"ok":"bad"); c.textContent=i+1;
+    c.addEventListener("click",()=>{ const el=document.getElementById("rev"+i); if(el) el.scrollIntoView({behavior:"smooth",block:"center"}); });
+    g.appendChild(c);
+  });
+}
+$("reviewMissed").addEventListener("click",()=>{ reviewFilter="missed"; renderReview(); });
+$("reviewAll").addEventListener("click",()=>{ reviewFilter="all"; renderReview(); });
+$("retakeBtn").addEventListener("click",()=>{
+  answers=Q.map(q=>(isMS(q)||isOrd(q))?[]:null); flags=new Array(Q.length).fill(false); revealed=[];
+  cur=0; remaining=TOTAL_SECONDS;
+  $("resultScreen").hidden=true; $("startScreen").hidden=false; window.scrollTo({top:0});
+});
+function renderReview(){
+  const host=$("reviewList"); host.innerHTML="";
+  Q.forEach((q,i)=>{
+    const ok=isCorrect(i);
+    if(reviewFilter==="missed" && ok) return;
+    const card=document.createElement("div"); card.className="card"; card.id="rev"+i;
+    const keys=(isMS(q)||isOrd(q))?q.c:[q.c];
+    const mine=(isMS(q)||isOrd(q))?(Array.isArray(answers[i])?answers[i]:[]):(answers[i]===null?[]:[answers[i]]);
+    let badge="";
+    if(isOrd(q)) badge='<span class="msbadge">ORDERING</span>';
+    else if(isAny(q)) badge='<span class="msbadge">SELECT ALL THAT APPLY</span>';
+    else if(isMS(q)) badge='<span class="msbadge">MULTI-SELECT · pick '+q.pick+'</span>';
+    let html='<div class="qhead"><span class="qnum">Q'+(i+1)+'</span><span class="dom">Domain '+q.d+' · '+q.t+'</span>'+badge+'</div>';
+    if(q.sc) html+='<div class="scenario rev"><div class="sc-head"><span class="sc-tag">'+q.sc.n+'</span></div><div class="sc-body">'+q.sc.txt+'</div></div>';
+    html+='<p class="stem">'+q.s+'</p><div class="opts">';
+    q.o.forEach((text,oi)=>{
+      let cls="opt", tag="";
+      if(isOrd(q)){
+        const myPos=mine.indexOf(oi), rightPos=q.c.indexOf(oi);
+        cls+= myPos===rightPos ? " correct" : " wrong";
+        tag=(rightPos+1)+"\u1d57\u02b0 correct"+(myPos>=0&&myPos!==rightPos?" (you put "+(myPos+1)+")":"");
+      } else {
+        const isKey=keys.includes(oi), picked=mine.includes(oi);
+        if(isKey && picked){ cls+=" correct"; tag="correct"; }
+        else if(isKey && !picked){ cls+=" missed"; tag="should have picked"; }
+        else if(!isKey && picked){ cls+=" wrong"; tag="your pick"; }
+      }
+      html+='<div class="'+cls+'"><span class="key">'+String.fromCharCode(65+oi)+'</span><span>'+text+'</span>'+
+            (tag?'<span class="tag">'+tag+'</span>':'')+'</div>';
+    });
+    html+='</div>';
+    if(!mine.length) html+='<div class="explain"><span class="lbl">Unanswered</span>Never leave blanks — a guess costs nothing.</div>';
+    let lbl;
+    if(isOrd(q)) lbl="Correct order: "+q.c.map(x=>String.fromCharCode(65+x)).join(" \u2192 ");
+    else if(isMS(q)) lbl="Why these are the answers";
+    else lbl="Why "+String.fromCharCode(65+q.c)+" is the best answer";
+    html+='<div class="explain"><span class="lbl">'+lbl+'</span>'+q.w+
+      '<div class="bokcite"><span class="code">BoK v2.1 \u00b7 '+q.bok.c+'</span><i>'+q.bok.t+'</i></div>'+
+      '<div class="sybcite"><span class="code">Sybex guide \u00b7 '+q.syb.c+'</span><i>'+q.syb.s+'</i></div></div>';
+    card.innerHTML=html; host.appendChild(card);
+  });
+  if(!host.children.length) host.innerHTML='<div class="card"><p class="sub" style="margin:0">Nothing missed — switch to "Review all" to read every explanation.</p></div>';
+}
+answers=Q.map(q=>(isMS(q)||isOrd(q))?[]:null);
