@@ -1,6 +1,6 @@
 # AIGP Study Kit
 
-**Free, unofficial practice exams and study tools for the IAPP AIGP (Artificial Intelligence Governance Professional) certification** for 341 original practice questions across five full-length mock exams, 54 framework recall cards, and a 3-week study plan, all cited against IAPP's AI Governance Professional Body of Knowledge v2.1.
+**Free, unofficial practice exams and study tools for the IAPP AIGP (Artificial Intelligence Governance Professional) certification** for 341 original practice questions across five full-length mock exams, 55 framework recall cards, and a 3-week study plan, all cited against IAPP's AI Governance Professional Body of Knowledge v2.1.
 
 **[→ Open the study kit](https://jasondmacleod.github.io/aigp-study-kit/)** (or open any file in `tools/` directly in a browser: no install, no account, no sign-up)
 
@@ -13,11 +13,11 @@
 | Tool | File | Contents |
 |---|---|---|
 | 3-Week Study Plan | [`tools/study-tool.html`](tools/study-tool.html) | Session-by-session plan mapped to BoK v2.1 domains, plus 20 diagnostic drill questions |
-| Framework Recall Cards | [`tools/framework-recall.html`](tools/framework-recall.html) | 54 cards on the frameworks the exam expects cold: NIST AI RMF, ISO/IEC 42001/42005, the EU AI Act, and more |
+| Framework Recall Cards | [`tools/framework-recall.html`](tools/framework-recall.html) | 55 cards on the frameworks the exam expects cold: NIST AI RMF, ISO/IEC 42001/42005, the EU AI Act, and more |
 | Mock Exam A | [`tools/mock-exam-a.html`](tools/mock-exam-a.html) | 71 questions, full-length, scenario-based |
 | Mock Exam B | [`tools/mock-exam-b.html`](tools/mock-exam-b.html) | 68 questions, independent question set |
 | Mock Exam C | [`tools/mock-exam-c.html`](tools/mock-exam-c.html) | 66 questions, reweighted toward under-drilled BoK indicators, includes multi-select |
-| Mock Exam D | [`tools/mock-exam-d.html`](tools/mock-exam-d.html) | 68 questions, includes ordering and select-all-that-apply formats |
+| Mock Exam D | [`tools/mock-exam-d.html`](tools/mock-exam-d.html) | 68 questions, includes multi-select items and newer EU AI Act and US state-law topics |
 | Mock Exam E | [`tools/mock-exam-e.html`](tools/mock-exam-e.html) | 68 questions, intended as a final readiness check |
 
 **341 practice questions in total.** Every mock exam is fully self-contained: a single HTML file with inline CSS and JavaScript, no build step, no dependencies beyond a Google Fonts stylesheet. Open it in any browser, on any device, offline-capable once loaded.
@@ -26,7 +26,7 @@
 
 Open any file above directly in a browser, or visit the [GitHub Pages site](https://jasondmacleod.github.io/aigp-study-kit/) for a linked overview of all seven tools. Each mock exam offers two modes:
 
-- **Timed**: a running clock, answers and explanations hidden until you submit, matching the real exam's pacing (~1.8 minutes/question, mirroring the official 180-minute exam).
+- **Timed**: a running clock, answers and explanations hidden until you submit, matching the real exam's pacing (~1.65 minutes/question: the official exam is 180 minutes including an optional 15-minute break).
 - **Untimed practice**: answers and explanations reveal as you go, better suited to early-stage learning than to a readiness check.
 
 Progress (answers, flags, timer state) is saved to your browser's `localStorage` only. Nothing is sent to a server, nothing is tracked, and nothing carries over between browsers or devices. That's a limitation to know about, not a bug: if you switch browsers partway through an exam, you'll restart it.
