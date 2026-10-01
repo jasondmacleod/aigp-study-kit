@@ -44,8 +44,8 @@ IAPP's official practice exam was reviewed only for topic-coverage and question-
 
 A couple of places where the "textbook answer" and "currently true" answer diverge, worth knowing regardless of which one the exam wants on test day:
 
-- **EU AI Act high-risk timelines.** Regulation (EU) 2026/1744 (the "Digital Omnibus on AI"), in force since 27 July 2026, deferred Annex III high-risk obligations to 2 December 2027 and Annex I to 2 August 2028. Prohibitions, GPAI rules, and the August 2027 GPAI grace period are unchanged. If a question's "textbook" answer predates this, that's the BoK's framing, not an error in this kit.
-- **Colorado's AI Act.** Colorado's SB 205 (the Colorado AI Act) was repealed before its original effective date. Some legacy study material still treats it as current law; this kit does not.
+- **EU AI Act high-risk timelines.** Regulation (EU) 2026/1744 (the "Digital Omnibus on AI"), in force since 27 July 2026, deferred Annex III high-risk obligations to 2 December 2027 and Annex I to 2 August 2028. The GPAI rules and the August 2027 GPAI grace period are unchanged; the Omnibus also added two prohibitions (AI-generated CSAM and non-consensual intimate deepfakes) that apply from 2 December 2026. If a question's "textbook" answer predates this, that's the BoK's framing, not an error in this kit.
+- **Colorado's AI Act.** Colorado's SB 24-205 was repealed before it took effect and replaced by SB 26-189 (effective 1 January 2027). BoK v2.1 predates the repeal, so this kit teaches SB 24-205 as the exam-era law and flags the change in currency notes.
 
 ## Known limitations
 
