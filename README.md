@@ -4,6 +4,8 @@
 
 **[→ Open the study kit](https://jasondmacleod.github.io/aigp-study-kit/)** (or open any file in `tools/` directly in a browser: no install, no account, no sign-up)
 
+Built by [Jason D. MacLeod](https://www.jasondmacleod.com/), a Seattle lawyer and cybersecurity compliance professional. More projects at [jasondmacleod.com/code](https://www.jasondmacleod.com/code/).
+
 > **This is not an official IAPP product.** It is an independent study aid built by one candidate while preparing for the AIGP exam, shared publicly in case it's useful to other candidates. It is not affiliated with, endorsed by, or produced in partnership with IAPP or Wiley. AIGP®, IAPP®, CIPP®, CIPM® and CIPT® are trademarks of IAPP. See [DISCLAIMER.md](DISCLAIMER.md) for the full statement, sourcing notes, and trademark/copyright details.
 
 ---
