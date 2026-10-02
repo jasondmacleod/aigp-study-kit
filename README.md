@@ -1,6 +1,6 @@
 # AIGP Study Kit
 
-**Free, unofficial practice exams and study tools for the IAPP AIGP (Artificial Intelligence Governance Professional) certification** for 341 original practice questions across five full-length mock exams, 55 framework recall cards, and a 3-week study plan, all cited against IAPP's AI Governance Professional Body of Knowledge v2.1.
+**Free, unofficial practice exams and study tools for the IAPP AIGP (Artificial Intelligence Governance Professional) certification**: 341 original practice questions across five full-length mock exams, 55 framework recall cards, and a 3-week study plan, all cited against IAPP's AI Governance Professional Body of Knowledge v2.1.
 
 **[→ Open the study kit](https://jasondmacleod.github.io/aigp-study-kit/)** (or open any file in `tools/` directly in a browser: no install, no account, no sign-up)
 
