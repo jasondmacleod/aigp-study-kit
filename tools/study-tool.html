@@ -238,7 +238,7 @@
   </section>
 
   <footer class="note">
-    <b>Verified basis.</b> Built on the Wiley guide (written to BoK v2.0.1, the "2025 objectives") and cross-checked against IAPP's BoK v2.1 (effective Feb 2, 2026). v2.1 is a recalibration, not an overhaul: same four domains, terminology unified from "AI model" to "AI system," and more weight on third-party governance, contracts, and data governance — all covered by the book; this plan adjusts the emphasis. The exam is written strictly from the BoK, so your Week 1 triage of that document is the authoritative scope check. Timing: 180 minutes (3 hours) — the official practice exam’s own instructions simulate it with a 180-minute clock; flagging and returning to questions is allowed. <b>Post-cutoff legal change:</b> Regulation (EU) 2026/1744 (the Digital Omnibus on AI) entered into force 27 July 2026, deferring EU AI Act Annex III high-risk obligations to 2 December 2027 and Annex I to 2 August 2028. Prohibitions, GPAI rules and the Aug 2027 GPAI grace period are unchanged. The exam predates this, so give the BoK answer on test day and carry the current dates into practice. Reported (not IAPP-official): some items are unscored pilots and roughly a third of questions are case-based. Domain weights per the book: foundations ~23% · laws/standards ~20% · governing development ~29% · governing deployment ~28%.
+    <b>Verified basis.</b> Built on the Wiley guide (written to BoK v2.0.1, the "2025 objectives") and cross-checked against IAPP's BoK v2.1 (effective Feb 2, 2026). v2.1 keeps the same four domains and mostly speaks of the "AI system"; this plan adjusts the book's emphasis to match it. The exam is written strictly from the BoK, so your Week 1 triage of that document is the authoritative scope check. Timing: 3 hours, including an optional 15-minute break; flagging and returning to questions is allowed. <b>Post-cutoff legal change:</b> Regulation (EU) 2026/1744 (the Digital Omnibus on AI) entered into force 27 July 2026, deferring EU AI Act Annex III high-risk obligations to 2 December 2027 and Annex I to 2 August 2028. The GPAI rules and the Aug 2027 GPAI grace period are unchanged; the omnibus also added two prohibitions that apply from 2 December 2026. The exam predates this, so give the BoK answer on test day and carry the current dates into practice. Per IAPP's candidate handbook, 85 of the 100 items are scored and about 30% of questions are tied to case studies. Domain weights per the BoK v2.1 blueprint: foundations ~21% · laws/standards ~25% · governing development ~27% · governing deployment ~27% (the Wiley guide's figures differ).
   </footer>
 </div>
 
@@ -278,7 +278,7 @@ const WEEKS = [
     ]
   },
   {
-    tag:"WK 2", title:"Governing Development + Deployment", sub:"Domains III & IV — the 57% of the exam. Your ML knowledge is a head start; learn the governance overlay.",
+    tag:"WK 2", title:"Governing Development + Deployment", sub:"Domains III & IV: over half the exam. Your ML knowledge is a head start; learn the governance overlay.",
     sessions:[
       {day:"Session 1", title:"Designing & building the model", domain:"III.A · IV.A/B", tasks:[
         "Ch 8 review Qs cold; read gaps",
@@ -477,7 +477,7 @@ function updateMeter(){
   const sub=document.getElementById("meterSub");
   if(pct===0) sub.textContent="Tick tasks as you finish them — your progress saves automatically.";
   else if(pct<34) sub.textContent="Week 1 territory — nail the frameworks now and everything downstream gets easier.";
-  else if(pct<67) sub.textContent="Into the 57% — Domains III & IV are the heart of the exam. Keep going.";
+  else if(pct<67) sub.textContent="Into Domains III & IV, over half the exam. Keep going.";
   else if(pct<100) sub.textContent="Home stretch — simulate under timing, then close out your BoK triage list before you sit.";
   else sub.textContent="Plan complete. Book the exam while it's fresh.";
 }

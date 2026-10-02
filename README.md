@@ -38,7 +38,7 @@ All questions, scenarios, answer options, and explanations are **original conten
 1. **BoK performance indicator**: the specific IAPP AIGP Body of Knowledge v2.1 indicator the question targets, quoted in IAPP's own wording. The BoK is free to download from [iapp.org/certify/aigp](https://iapp.org/certify/aigp/); citing it lets you trace a wrong answer straight back to the source material instead of guessing at what to review.
 2. **Study-guide reference**: a chapter and section name from the Wiley AIGP study guide, as a pointer only (no text from the book is reproduced).
 
-IAPP's official practice exam was reviewed only for topic-coverage and question-format ratios (how heavily each domain is weighted, and roughly what share of questions are scenario-based vs. direct recall), never for question text, options, or explanations.
+IAPP's official practice exam is not reproduced here. It informs only topic coverage and format ratios (how heavily each domain is weighted, and roughly what share of questions are scenario-based), and every question in this kit is screened against it so that none follows an official item's wording, options or fact pattern.
 
 ## Known content landmines
 
